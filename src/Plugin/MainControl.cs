@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Xrm.Tooling.Connector;
 using XrmToolBox.Extensibility;
 
 namespace DataverseStorageCleaner;
@@ -81,8 +82,9 @@ public partial class MainControl : PluginControlBase
             Message = "Getting Database Settings",
             Work = (worker, args) =>
             {
-                var who = (WhoAmIResponse)Service.Execute(new WhoAmIRequest());
-                var org = Service.Retrieve("organization", who.OrganizationId, new ColumnSet("orgdborgsettings"));
+                // SetWorkingMessage("Getting Organization Settings");
+                Thread.Sleep(3 * 1000);
+                var org = Service.Retrieve("organization", Service.Client().ConnectedOrgId, new ColumnSet("orgdborgsettings"));
                 args.Result = org.GetAttributeValue<string>("orgdborgsettings") ?? "<settings/>";
             },
             PostWorkCallBack = (args) =>
@@ -102,10 +104,6 @@ public partial class MainControl : PluginControlBase
                                  e => e.Name.LocalName,
                                  e => e.Value
                              ) ?? new Dictionary<string, string>();
-
-                // example
-                //var quickFindLimit = kv.TryGetValue("QuickFindRecordLimitEnabled", out var v) ? v : "(not set)";
-
 
                 // Display the results in a message box as a list of key/value pairs
                 listBox1.Items.Clear();
