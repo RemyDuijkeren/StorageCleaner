@@ -7,8 +7,8 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <RootNamespace>DataverseStorageCleaner</RootNamespace>
-    <AssemblyName>DataverseStorageCleaner</AssemblyName>
+    <RootNamespace>StorageCleaner</RootNamespace>
+    <AssemblyName>StorageCleaner</AssemblyName>
 
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreLockedMode Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreLockedMode>

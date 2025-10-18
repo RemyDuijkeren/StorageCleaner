@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using Microsoft.Xrm.Sdk.Query;
+﻿using Microsoft.Xrm.Sdk.Query;
 using XrmToolBox.Extensibility;
 
-namespace DataverseStorageCleaner.Views.Actions;
+namespace StorageCleaner.Actions.CleanUpSystemJobs;
 
-public partial class CleanUpSystemJobsActionControl : ActionControlBase
+public partial class CleanUpSystemJobsActionControl : ActionControlBase, IAction
 {
-    private PluginControlBase? HostPcb => Host as PluginControlBase;
+    public string Id => "CleanUpSystemJobs";
+    public string DisplayName => "Clean Up System Jobs";
+    public string? Description => "Automatic deletion of System Jobs";
+
+    public ActionControlBase Instance() => this;
 
     public CleanUpSystemJobsActionControl()
     {
@@ -23,51 +23,16 @@ public partial class CleanUpSystemJobsActionControl : ActionControlBase
 
     private void btnViewSample_Click(object sender, EventArgs e)
     {
-        if (HostPcb?.Service == null)
-        {
-            MessageBox.Show("Not connected yet. Use Connect in XrmToolBox first.");
-            return;
-        }
-
-        try
-        {
-            // Sample: retrieve first 5 systemjobs and show counts
-            var qe = new QueryExpression("systemjob") { TopCount = 5, ColumnSet = new ColumnSet("name", "statecode", "statuscode") };
-            var result = HostPcb.Service.RetrieveMultiple(qe);
-            MessageBox.Show($"Fetched {result.Entities.Count} sample system jobs.");
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, "Error");
-        }
-
         // The ExecuteMethod method handles connecting to an organization if XrmToolBox is not yet connected
-        HostPcb?.ExecuteMethod(GetDatabaseSettings);
+        Host?.ExecuteMethod(GetDatabaseSettings);
     }
 
-    public override void Initialize(object host, Settings settings)
-    {
-        base.Initialize(host, settings);
-        if (Settings != null)
-        {
-            txtUrl.Text = Settings.LastUsedOrganizationWebappUrl;
-        }
-    }
-
-    public override void SaveChanges()
-    {
-        if (Settings != null)
-        {
-            Settings.LastUsedOrganizationWebappUrl = txtUrl.Text?.Trim();
-        }
-    }
-
-    private void GetDatabaseSettings() => HostPcb?.WorkAsync(new WorkAsyncInfo
+    private void GetDatabaseSettings() => Host?.WorkAsync(new WorkAsyncInfo
     {
         Message = "Getting Database Settings",
         Work = (worker, args) =>
         {
-            var org = HostPcb!.Service.Retrieve("organization", HostPcb.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId, new ColumnSet("orgdborgsettings"));
+            var org = Host!.Service.Retrieve("organization", Host.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId, new ColumnSet("orgdborgsettings"));
             args.Result = org.GetAttributeValue<string>("orgdborgsettings");
         },
         PostWorkCallBack = args =>

@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Tooling.Connector;
 
-namespace DataverseStorageCleaner;
+namespace StorageCleaner.Extensions;
 
 /// <summary>Extension methods for working with IOrganizationService.</summary>
 public static class OrganizationServiceExtensions

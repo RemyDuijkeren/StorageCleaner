@@ -1,4 +1,6 @@
-namespace DataverseStorageCleaner.Views
+using System.Windows.Forms;
+
+namespace StorageCleaner.Views
 {
     partial class JobsView
     {

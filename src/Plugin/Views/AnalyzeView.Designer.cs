@@ -1,4 +1,4 @@
-namespace DataverseStorageCleaner.Views
+namespace StorageCleaner.Views
 {
     partial class AnalyzeView
     {

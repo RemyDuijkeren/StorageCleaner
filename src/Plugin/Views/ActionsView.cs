@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
-using DataverseStorageCleaner.Views.Actions;
+using StorageCleaner.Actions;
 
-namespace DataverseStorageCleaner.Views;
+namespace StorageCleaner.Views;
 
 public partial class ActionsView : ViewBase
 {
@@ -58,7 +54,7 @@ public partial class ActionsView : ViewBase
 
         lstActions.DataSource = null;
         lstActions.DataSource = _actions;
-        lstActions.DisplayMember = nameof(IAction.Name);
+        lstActions.DisplayMember = nameof(IAction.DisplayName);
 
         if (_actions.Count > 0)
         {
@@ -73,9 +69,9 @@ public partial class ActionsView : ViewBase
 
         try
         {
-            var ctrl = action.CreateControl();
+            var ctrl = action.Instance();
             ctrl.Dock = DockStyle.Fill;
-            ctrl.Initialize(Host, Settings!);
+            ctrl.Initialize(Host);
 
             pnlHost.SuspendLayout();
             pnlHost.Controls.Clear();
@@ -86,7 +82,7 @@ public partial class ActionsView : ViewBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to open action '{action.Name}': {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Failed to open action '{action.DisplayName}': {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 

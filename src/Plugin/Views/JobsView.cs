@@ -1,4 +1,4 @@
-namespace DataverseStorageCleaner.Views;
+namespace StorageCleaner.Views;
 
 public partial class JobsView : ViewBase
 {

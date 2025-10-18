@@ -1,7 +1,4 @@
-using Microsoft.Xrm.Sdk;
-using McTools.Xrm.Connection;
-
-namespace DataverseStorageCleaner.Views;
+namespace StorageCleaner.Views;
 
 public partial class SettingsView : ViewBase
 {

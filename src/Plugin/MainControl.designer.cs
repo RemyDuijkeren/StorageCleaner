@@ -1,4 +1,6 @@
-﻿namespace DataverseStorageCleaner
+﻿using StorageCleaner.Views;
+
+namespace StorageCleaner
 {
     partial class MainControl
     {
@@ -25,13 +27,13 @@
             this.tsbSample = new System.Windows.Forms.ToolStripButton();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabAnalyze = new System.Windows.Forms.TabPage();
+            this.analyzeView = new StorageCleaner.Views.AnalyzeView();
             this.tabActions = new System.Windows.Forms.TabPage();
+            this.actionsView = new StorageCleaner.Views.ActionsView();
             this.tabJobs = new System.Windows.Forms.TabPage();
+            this.jobsView = new StorageCleaner.Views.JobsView();
             this.tabSettings = new System.Windows.Forms.TabPage();
-            this.analyzeView = new DataverseStorageCleaner.Views.AnalyzeView();
-            this.actionsView = new DataverseStorageCleaner.Views.ActionsView();
-            this.jobsView = new DataverseStorageCleaner.Views.JobsView();
-            this.settingsView = new DataverseStorageCleaner.Views.SettingsView();
+            this.settingsView = new StorageCleaner.Views.SettingsView();
             this.toolStripMenu.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabAnalyze.SuspendLayout();
@@ -73,9 +75,7 @@
             //
             // tabMain
             //
-            this.tabMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tabMain.Controls.Add(this.tabAnalyze);
             this.tabMain.Controls.Add(this.tabActions);
             this.tabMain.Controls.Add(this.tabJobs);
@@ -97,6 +97,14 @@
             this.tabAnalyze.Text = "Analyze";
             this.tabAnalyze.UseVisualStyleBackColor = true;
             //
+            // analyzeView
+            //
+            this.analyzeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.analyzeView.Location = new System.Drawing.Point(3, 3);
+            this.analyzeView.Name = "analyzeView";
+            this.analyzeView.Size = new System.Drawing.Size(786, 440);
+            this.analyzeView.TabIndex = 0;
+            //
             // tabActions
             //
             this.tabActions.Controls.Add(this.actionsView);
@@ -107,6 +115,14 @@
             this.tabActions.TabIndex = 1;
             this.tabActions.Text = "Actions";
             this.tabActions.UseVisualStyleBackColor = true;
+            //
+            // actionsView
+            //
+            this.actionsView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.actionsView.Location = new System.Drawing.Point(3, 3);
+            this.actionsView.Name = "actionsView";
+            this.actionsView.Size = new System.Drawing.Size(786, 440);
+            this.actionsView.TabIndex = 0;
             //
             // tabJobs
             //
@@ -119,6 +135,14 @@
             this.tabJobs.Text = "Jobs";
             this.tabJobs.UseVisualStyleBackColor = true;
             //
+            // jobsView
+            //
+            this.jobsView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.jobsView.Location = new System.Drawing.Point(3, 3);
+            this.jobsView.Name = "jobsView";
+            this.jobsView.Size = new System.Drawing.Size(786, 440);
+            this.jobsView.TabIndex = 0;
+            //
             // tabSettings
             //
             this.tabSettings.Controls.Add(this.settingsView);
@@ -129,30 +153,6 @@
             this.tabSettings.TabIndex = 3;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
-            //
-            // analyzeView
-            //
-            this.analyzeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.analyzeView.Location = new System.Drawing.Point(3, 3);
-            this.analyzeView.Name = "analyzeView";
-            this.analyzeView.Size = new System.Drawing.Size(786, 440);
-            this.analyzeView.TabIndex = 0;
-            //
-            // actionsView
-            //
-            this.actionsView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.actionsView.Location = new System.Drawing.Point(3, 3);
-            this.actionsView.Name = "actionsView";
-            this.actionsView.Size = new System.Drawing.Size(786, 440);
-            this.actionsView.TabIndex = 0;
-            //
-            // jobsView
-            //
-            this.jobsView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.jobsView.Location = new System.Drawing.Point(3, 3);
-            this.jobsView.Name = "jobsView";
-            this.jobsView.Size = new System.Drawing.Size(786, 440);
-            this.jobsView.TabIndex = 0;
             //
             // settingsView
             //
@@ -187,10 +187,10 @@
         private System.Windows.Forms.TabPage tabActions;
         private System.Windows.Forms.TabPage tabJobs;
         private System.Windows.Forms.TabPage tabSettings;
-        private DataverseStorageCleaner.Views.AnalyzeView analyzeView;
-        private DataverseStorageCleaner.Views.ActionsView actionsView;
-        private DataverseStorageCleaner.Views.JobsView jobsView;
-        private DataverseStorageCleaner.Views.SettingsView settingsView;
+        private AnalyzeView analyzeView;
+        private StorageCleaner.Views.ActionsView actionsView;
+        private JobsView jobsView;
+        private SettingsView settingsView;
 
         private System.Windows.Forms.ToolStrip toolStripMenu;
         private System.Windows.Forms.ToolStripButton tsbClose;

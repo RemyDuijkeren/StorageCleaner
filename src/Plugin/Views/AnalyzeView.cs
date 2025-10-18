@@ -1,6 +1,4 @@
-using XrmToolBox.Extensibility;
-
-namespace DataverseStorageCleaner.Views;
+namespace StorageCleaner.Views;
 
 public partial class AnalyzeView : ViewBase
 {

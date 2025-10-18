@@ -1,17 +1,16 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-namespace DataverseStorageCleaner.Views.Actions
+namespace StorageCleaner.Actions.CleanUpSystemJobs
 {
     partial class CleanUpSystemJobsActionControl
     {
         private System.ComponentModel.IContainer components = null;
-        private TextBox txtUrl;
-        private Button btnSave;
-        private Label lblUrl;
-        private Button btnViewSample;
-        private GroupBox grpOrgSettings;
-        private DataGridView gridOrgSettings;
+        private System.Windows.Forms.TextBox txtUrl;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Label lblUrl;
+        private System.Windows.Forms.Button btnViewSample;
+        private System.Windows.Forms.GroupBox grpOrgSettings;
+        private System.Windows.Forms.DataGridView gridOrgSettings;
 
         protected override void Dispose(bool disposing)
         {
