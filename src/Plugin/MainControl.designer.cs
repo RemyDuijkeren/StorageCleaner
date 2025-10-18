@@ -25,17 +25,17 @@
             this.tsbSample = new System.Windows.Forms.ToolStripButton();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabAnalyze = new System.Windows.Forms.TabPage();
-            this.tabRecipes = new System.Windows.Forms.TabPage();
+            this.tabActions = new System.Windows.Forms.TabPage();
             this.tabJobs = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.analyzeView = new DataverseStorageCleaner.Views.AnalyzeView();
-            this.recipesView = new DataverseStorageCleaner.Views.RecipesView();
+            this.actionsView = new DataverseStorageCleaner.Views.ActionsView();
             this.jobsView = new DataverseStorageCleaner.Views.JobsView();
             this.settingsView = new DataverseStorageCleaner.Views.SettingsView();
             this.toolStripMenu.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabAnalyze.SuspendLayout();
-            this.tabRecipes.SuspendLayout();
+            this.tabActions.SuspendLayout();
             this.tabJobs.SuspendLayout();
             this.tabSettings.SuspendLayout();
             this.SuspendLayout();
@@ -77,7 +77,7 @@
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabMain.Controls.Add(this.tabAnalyze);
-            this.tabMain.Controls.Add(this.tabRecipes);
+            this.tabMain.Controls.Add(this.tabActions);
             this.tabMain.Controls.Add(this.tabJobs);
             this.tabMain.Controls.Add(this.tabSettings);
             this.tabMain.Location = new System.Drawing.Point(0, 28);
@@ -97,16 +97,16 @@
             this.tabAnalyze.Text = "Analyze";
             this.tabAnalyze.UseVisualStyleBackColor = true;
             //
-            // tabRecipes
+            // tabActions
             //
-            this.tabRecipes.Controls.Add(this.recipesView);
-            this.tabRecipes.Location = new System.Drawing.Point(4, 22);
-            this.tabRecipes.Name = "tabRecipes";
-            this.tabRecipes.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRecipes.Size = new System.Drawing.Size(792, 446);
-            this.tabRecipes.TabIndex = 1;
-            this.tabRecipes.Text = "Recipes";
-            this.tabRecipes.UseVisualStyleBackColor = true;
+            this.tabActions.Controls.Add(this.actionsView);
+            this.tabActions.Location = new System.Drawing.Point(4, 22);
+            this.tabActions.Name = "tabActions";
+            this.tabActions.Padding = new System.Windows.Forms.Padding(3);
+            this.tabActions.Size = new System.Drawing.Size(792, 446);
+            this.tabActions.TabIndex = 1;
+            this.tabActions.Text = "Actions";
+            this.tabActions.UseVisualStyleBackColor = true;
             //
             // tabJobs
             //
@@ -138,13 +138,13 @@
             this.analyzeView.Size = new System.Drawing.Size(786, 440);
             this.analyzeView.TabIndex = 0;
             //
-            // recipesView
+            // actionsView
             //
-            this.recipesView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.recipesView.Location = new System.Drawing.Point(3, 3);
-            this.recipesView.Name = "recipesView";
-            this.recipesView.Size = new System.Drawing.Size(786, 440);
-            this.recipesView.TabIndex = 0;
+            this.actionsView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.actionsView.Location = new System.Drawing.Point(3, 3);
+            this.actionsView.Name = "actionsView";
+            this.actionsView.Size = new System.Drawing.Size(786, 440);
+            this.actionsView.TabIndex = 0;
             //
             // jobsView
             //
@@ -175,7 +175,7 @@
             this.toolStripMenu.PerformLayout();
             this.tabMain.ResumeLayout(false);
             this.tabAnalyze.ResumeLayout(false);
-            this.tabRecipes.ResumeLayout(false);
+            this.tabActions.ResumeLayout(false);
             this.tabJobs.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -184,11 +184,11 @@
 
         private System.Windows.Forms.TabControl tabMain;
         private System.Windows.Forms.TabPage tabAnalyze;
-        private System.Windows.Forms.TabPage tabRecipes;
+        private System.Windows.Forms.TabPage tabActions;
         private System.Windows.Forms.TabPage tabJobs;
         private System.Windows.Forms.TabPage tabSettings;
         private DataverseStorageCleaner.Views.AnalyzeView analyzeView;
-        private DataverseStorageCleaner.Views.RecipesView recipesView;
+        private DataverseStorageCleaner.Views.ActionsView actionsView;
         private DataverseStorageCleaner.Views.JobsView jobsView;
         private DataverseStorageCleaner.Views.SettingsView settingsView;
 

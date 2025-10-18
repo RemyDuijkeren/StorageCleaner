@@ -13,7 +13,7 @@ public partial class MainControl : PluginControlBase
         InitializeComponent();
 
         // Wire cross-view navigation/events
-        analyzeView.CreateRecipeRequested += (s, e) => tabMain.SelectedTab = tabRecipes;
+        analyzeView.CreateActionRequested += (s, e) => tabMain.SelectedTab = tabActions;
     }
 
     void MainControl_Load(object sender, EventArgs e)
@@ -33,7 +33,7 @@ public partial class MainControl : PluginControlBase
 
         // Initialize subviews with host and settings (Service/Connection are accessed through Host)
         analyzeView.Initialize(this, _settings);
-        recipesView.Initialize(this, _settings);
+        actionsView.Initialize(this, _settings);
         jobsView.Initialize(this, _settings);
         settingsView.Initialize(this, _settings);
     }
