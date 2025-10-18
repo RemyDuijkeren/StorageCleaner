@@ -1,9 +1,9 @@
-﻿namespace StorageCleaner.Actions.CleanUpSystemJobs
+﻿namespace StorageCleaner.Actions.SystemJobCleanup
 {
-    partial class CleanUpSystemJobsActionControl
+    partial class SystemJobCleanupActionControl
     {
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.Button btnViewSample;
+        private System.Windows.Forms.Button btnAnalyze;
         private System.Windows.Forms.GroupBox grpOrgSettings;
         private System.Windows.Forms.DataGridView gridOrgSettings;
 
@@ -18,22 +18,22 @@
 
         private void InitializeComponent()
         {
-            this.btnViewSample = new System.Windows.Forms.Button();
+            this.btnAnalyze = new System.Windows.Forms.Button();
             this.grpOrgSettings = new System.Windows.Forms.GroupBox();
             this.gridOrgSettings = new System.Windows.Forms.DataGridView();
             this.grpOrgSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridOrgSettings)).BeginInit();
             this.SuspendLayout();
             //
-            // btnViewSample
+            // btnAnalyze
             //
-            this.btnViewSample.Location = new System.Drawing.Point(112, 72);
-            this.btnViewSample.Name = "btnViewSample";
-            this.btnViewSample.Size = new System.Drawing.Size(120, 23);
-            this.btnViewSample.TabIndex = 3;
-            this.btnViewSample.Text = "View sample";
-            this.btnViewSample.UseVisualStyleBackColor = true;
-            this.btnViewSample.Click += new System.EventHandler(this.btnViewSample_Click);
+            this.btnAnalyze.Location = new System.Drawing.Point(112, 72);
+            this.btnAnalyze.Name = "btnAnalyze";
+            this.btnAnalyze.Size = new System.Drawing.Size(120, 23);
+            this.btnAnalyze.TabIndex = 3;
+            this.btnAnalyze.Text = "Analyze";
+            this.btnAnalyze.UseVisualStyleBackColor = true;
+            this.btnAnalyze.Click += new System.EventHandler(this.AnalyzeClick);
             //
             // grpOrgSettings
             //
@@ -84,8 +84,8 @@
             // CleanUpSystemJobsActionControl
             //
             this.Controls.Add(this.grpOrgSettings);
-            this.Controls.Add(this.btnViewSample);
-            this.Name = "CleanUpSystemJobsActionControl";
+            this.Controls.Add(this.btnAnalyze);
+            this.Name = "SystemJobCleanupActionControl";
             this.Size = new System.Drawing.Size(2782, 776);
             this.grpOrgSettings.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridOrgSettings)).EndInit();

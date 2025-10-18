@@ -1,31 +1,28 @@
 ﻿using Microsoft.Xrm.Sdk.Query;
 using XrmToolBox.Extensibility;
 
-namespace StorageCleaner.Actions.CleanUpSystemJobs;
+namespace StorageCleaner.Actions.SystemJobCleanup;
 
-public partial class CleanUpSystemJobsActionControl : ActionControlBase
+[Action("SystemJobCleanup", "System Job Cleanup", "Automatic deletion of System Jobs")]
+public partial class SystemJobCleanupActionControl : ActionControl
 {
-    public CleanUpSystemJobsActionControl()
+    public SystemJobCleanupActionControl()
     {
-        Id = "CleanUpSystemJobs";
-        DisplayName = "Clean Up System Jobs";
-        Description = "Automatic deletion of System Jobs";
-
         InitializeComponent();
     }
 
-    private void btnViewSample_Click(object sender, EventArgs e)
+    public override void AnalyzeClick(object sender, EventArgs e)
     {
         // The ExecuteMethod method handles connecting to an organization if XrmToolBox is not yet connected
-        Host?.ExecuteMethod(GetDatabaseSettings);
+        Host.ExecuteMethod(GetDatabaseSettings);
     }
 
-    private void GetDatabaseSettings() => Host?.WorkAsync(new WorkAsyncInfo
+    void GetDatabaseSettings() => Host.WorkAsync(new WorkAsyncInfo
     {
         Message = "Getting Database Settings",
         Work = (worker, args) =>
         {
-            var org = Host!.Service.Retrieve("organization", Host.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId, new ColumnSet("orgdborgsettings"));
+            var org = Host.Service.Retrieve("organization", Host.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId, new ColumnSet("orgdborgsettings"));
             args.Result = org.GetAttributeValue<string>("orgdborgsettings");
         },
         PostWorkCallBack = args =>

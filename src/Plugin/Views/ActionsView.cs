@@ -5,8 +5,17 @@ namespace StorageCleaner.Views;
 
 public partial class ActionsView : ViewBase
 {
-    private readonly List<IAction> _actions = new();
-    private ActionControlBase? _current;
+    private sealed class ActionItem
+    {
+        public Type Type { get; set; }
+        public string Id { get; set; }
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public override string ToString() => DisplayName;
+    }
+
+    private readonly List<ActionItem> _items = new();
+    private ActionControl? _current;
 
     public ActionsView()
     {
@@ -29,34 +38,25 @@ public partial class ActionsView : ViewBase
 
     private void LoadActions()
     {
-        _actions.Clear();
-        var asm = Assembly.GetExecutingAssembly();
-        var actionTypes = asm
-            .GetTypes()
-            .Where(t => typeof(IAction).IsAssignableFrom(t) && !t.IsAbstract && t.GetConstructor(Type.EmptyTypes) != null)
-            .OrderBy(t => t.Name)
-            .ToList();
+        _items.Clear();
 
-        foreach (var t in actionTypes)
+        foreach ((Type type, ActionAttribute attribute) in FindActions(Assembly.GetExecutingAssembly()))
         {
-            try
+            _items.Add(new ActionItem
             {
-                if (Activator.CreateInstance(t) is IAction action)
-                {
-                    _actions.Add(action);
-                }
-            }
-            catch
-            {
-                // ignore faulty action types
-            }
+                Type = type,
+                Id = attribute.Id,
+                DisplayName = attribute.DisplayName,
+                Description = attribute.Description
+            });
         }
 
         lstActions.DataSource = null;
-        lstActions.DataSource = _actions;
-        lstActions.DisplayMember = nameof(IAction.DisplayName);
+        lstActions.DisplayMember = nameof(ActionItem.DisplayName);
+        lstActions.ValueMember = nameof(ActionItem.Id);
+        lstActions.DataSource = _items;
 
-        if (_actions.Count > 0)
+        if (_items.Count > 0)
         {
             lstActions.SelectedIndex = 0;
         }
@@ -64,12 +64,14 @@ public partial class ActionsView : ViewBase
 
     private void lstActions_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        if (lstActions.SelectedItem is not IAction action)
+        if (lstActions.SelectedItem is not ActionItem item)
             return;
 
         try
         {
-            var ctrl = action.Instance();
+            if (!(Activator.CreateInstance(item.Type) is ActionControl ctrl))
+                throw new InvalidOperationException($"Could not create action control: {item.DisplayName}");
+
             ctrl.Dock = DockStyle.Fill;
             ctrl.Initialize(Host);
 
@@ -82,8 +84,35 @@ public partial class ActionsView : ViewBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to open action '{action.DisplayName}': {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Failed to open action '{item.DisplayName}': {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
+    /// <summary>
+    /// Finds and returns all types within the specified assembly that are concrete, derive from
+    /// <see cref="ActionControl"/>, have a public default constructor, and are decorated with
+    /// the <see cref="ActionAttribute"/>. The results are ordered by the <c>DisplayName</c> property
+    /// of the <see cref="ActionAttribute"/>.
+    /// </summary>
+    /// <param name="assembly">The assembly to search for types that meet the specified criteria.</param>
+    /// <returns>
+    /// A collection of tuples where each tuple contains the following:
+    /// - <c>Type</c>: The type of the class derived from <see cref="ActionControl"/>.
+    /// - <c>Action</c>: The associated <see cref="ActionAttribute"/> metadata of the class.
+    /// </returns>
+    static IEnumerable<(Type Type, ActionAttribute Action)> FindActions(Assembly assembly) =>
+        assembly.GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract)
+                .Where(t => typeof(ActionControl).IsAssignableFrom(t))
+                .Where(t => t.GetConstructor(Type.EmptyTypes) != null)
+                .Select(t => new
+                {
+                    Type = t,
+                    Meta = t.GetCustomAttributes(typeof(ActionAttribute), inherit: false)
+                            .OfType<ActionAttribute>()
+                            .FirstOrDefault()
+                })
+                .Where(x => x.Meta != null)
+                .OrderBy(x => x.Meta!.DisplayName)
+                .Select(x => (x.Type, x.Meta!));
 }
