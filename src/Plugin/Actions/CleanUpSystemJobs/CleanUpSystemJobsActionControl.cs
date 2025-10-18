@@ -3,22 +3,15 @@ using XrmToolBox.Extensibility;
 
 namespace StorageCleaner.Actions.CleanUpSystemJobs;
 
-public partial class CleanUpSystemJobsActionControl : ActionControlBase, IAction
+public partial class CleanUpSystemJobsActionControl : ActionControlBase
 {
-    public string Id => "CleanUpSystemJobs";
-    public string DisplayName => "Clean Up System Jobs";
-    public string? Description => "Automatic deletion of System Jobs";
-
-    public ActionControlBase Instance() => this;
-
     public CleanUpSystemJobsActionControl()
     {
-        InitializeComponent();
-    }
+        Id = "CleanUpSystemJobs";
+        DisplayName = "Clean Up System Jobs";
+        Description = "Automatic deletion of System Jobs";
 
-    private void btnSave_Click(object sender, EventArgs e)
-    {
-        SaveChanges();
+        InitializeComponent();
     }
 
     private void btnViewSample_Click(object sender, EventArgs e)

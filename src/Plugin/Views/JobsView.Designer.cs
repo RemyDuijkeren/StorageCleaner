@@ -30,13 +30,40 @@ namespace StorageCleaner.Views
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gridJobs.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            var colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            colName.HeaderText = "Name";
+            colName.Name = "colName";
+            colName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+
+            var colStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            colStatus.HeaderText = "Status";
+            colStatus.Name = "colStatus";
+            colStatus.Width = 100;
+
+            var colNextRun = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            colNextRun.HeaderText = "Next run";
+            colNextRun.Name = "colNextRun";
+            colNextRun.Width = 140;
+
+            var colLastRun = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            colLastRun.HeaderText = "Last run";
+            colLastRun.Name = "colLastRun";
+            colLastRun.Width = 140;
+
+            var colRecords = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            colRecords.HeaderText = "Records affected";
+            colRecords.Name = "colRecords";
+            colRecords.Width = 120;
+
             this.gridJobs.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            new System.Windows.Forms.DataGridViewTextBoxColumn { HeaderText = "Name", Name = "colName", AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill },
-            new System.Windows.Forms.DataGridViewTextBoxColumn { HeaderText = "Status", Name = "colStatus", Width = 100 },
-            new System.Windows.Forms.DataGridViewTextBoxColumn { HeaderText = "Next run", Name = "colNextRun", Width = 140 },
-            new System.Windows.Forms.DataGridViewTextBoxColumn { HeaderText = "Last run", Name = "colLastRun", Width = 140 },
-            new System.Windows.Forms.DataGridViewTextBoxColumn { HeaderText = "Records affected", Name = "colRecords", Width = 120 }
+                colName,
+                colStatus,
+                colNextRun,
+                colLastRun,
+                colRecords
             });
+
             this.gridJobs.Location = new System.Drawing.Point(16, 16);
             this.gridJobs.Name = "gridJobs";
             this.gridJobs.ReadOnly = true;

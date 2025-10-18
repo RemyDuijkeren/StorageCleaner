@@ -16,10 +16,7 @@ public class ViewBase : UserControl
     protected PluginControlBase Host { get; private set; } = null!;
 
     /// <summary>Single initialization entry point for subviews.</summary>
-    public void Initialize(PluginControlBase host)
-    {
-        Host = host;
-    }
+    public void Initialize(PluginControlBase host) => Host = host;
 
     public static bool IsDesignMode() => LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 }

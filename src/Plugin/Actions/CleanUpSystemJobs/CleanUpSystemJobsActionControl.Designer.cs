@@ -1,13 +1,8 @@
-﻿using System.Windows.Forms;
-
-namespace StorageCleaner.Actions.CleanUpSystemJobs
+﻿namespace StorageCleaner.Actions.CleanUpSystemJobs
 {
     partial class CleanUpSystemJobsActionControl
     {
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.TextBox txtUrl;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Label lblUrl;
         private System.Windows.Forms.Button btnViewSample;
         private System.Windows.Forms.GroupBox grpOrgSettings;
         private System.Windows.Forms.DataGridView gridOrgSettings;
@@ -23,44 +18,12 @@ namespace StorageCleaner.Actions.CleanUpSystemJobs
 
         private void InitializeComponent()
         {
-            this.lblUrl = new System.Windows.Forms.Label();
-            this.txtUrl = new System.Windows.Forms.TextBox();
-            this.btnSave = new System.Windows.Forms.Button();
             this.btnViewSample = new System.Windows.Forms.Button();
             this.grpOrgSettings = new System.Windows.Forms.GroupBox();
             this.gridOrgSettings = new System.Windows.Forms.DataGridView();
+            this.grpOrgSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridOrgSettings)).BeginInit();
             this.SuspendLayout();
-            //
-            // CleanUpSystemJobsActionControl
-            //
-            this.Dock = System.Windows.Forms.DockStyle.Fill;
-            //
-            // lblUrl
-            //
-            this.lblUrl.AutoSize = true;
-            this.lblUrl.Location = new System.Drawing.Point(12, 16);
-            this.lblUrl.Name = "lblUrl";
-            this.lblUrl.Size = new System.Drawing.Size(114, 13);
-            this.lblUrl.TabIndex = 0;
-            this.lblUrl.Text = "Last used Org URL:";
-            //
-            // txtUrl
-            //
-            this.txtUrl.Location = new System.Drawing.Point(15, 36);
-            this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(400, 20);
-            this.txtUrl.TabIndex = 1;
-            //
-            // btnSave
-            //
-            this.btnSave.Location = new System.Drawing.Point(15, 72);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(80, 23);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             //
             // btnViewSample
             //
@@ -77,9 +40,10 @@ namespace StorageCleaner.Actions.CleanUpSystemJobs
             this.grpOrgSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpOrgSettings.Controls.Add(this.gridOrgSettings);
             this.grpOrgSettings.Location = new System.Drawing.Point(15, 112);
             this.grpOrgSettings.Name = "grpOrgSettings";
-            this.grpOrgSettings.Size = new System.Drawing.Size(600, 260);
+            this.grpOrgSettings.Size = new System.Drawing.Size(2750, 644);
             this.grpOrgSettings.TabIndex = 4;
             this.grpOrgSettings.TabStop = false;
             this.grpOrgSettings.Text = "Organization settings";
@@ -91,10 +55,22 @@ namespace StorageCleaner.Actions.CleanUpSystemJobs
             this.gridOrgSettings.AllowUserToResizeRows = false;
             this.gridOrgSettings.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.gridOrgSettings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            var colSetting = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            colSetting.HeaderText = "Setting";
+            colSetting.Name = "colSetting";
+            colSetting.FillWeight = 45F;
+
+            var colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            colValue.HeaderText = "Value";
+            colValue.Name = "colValue";
+            colValue.FillWeight = 55F;
+
             this.gridOrgSettings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                new System.Windows.Forms.DataGridViewTextBoxColumn { HeaderText = "Setting", Name = "colSetting", FillWeight = 45 },
-                new System.Windows.Forms.DataGridViewTextBoxColumn { HeaderText = "Value", Name = "colValue", FillWeight = 55 }
+                colSetting,
+                colValue
             });
+
             this.gridOrgSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridOrgSettings.Location = new System.Drawing.Point(3, 16);
             this.gridOrgSettings.MultiSelect = false;
@@ -102,21 +78,19 @@ namespace StorageCleaner.Actions.CleanUpSystemJobs
             this.gridOrgSettings.ReadOnly = true;
             this.gridOrgSettings.RowHeadersVisible = false;
             this.gridOrgSettings.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridOrgSettings.Size = new System.Drawing.Size(2744, 625);
             this.gridOrgSettings.TabIndex = 0;
             //
             // CleanUpSystemJobsActionControl
             //
-            this.grpOrgSettings.Controls.Add(this.gridOrgSettings);
             this.Controls.Add(this.grpOrgSettings);
             this.Controls.Add(this.btnViewSample);
-            this.Controls.Add(this.lblUrl);
-            this.Controls.Add(this.txtUrl);
-            this.Controls.Add(this.btnSave);
             this.Name = "CleanUpSystemJobsActionControl";
-            this.Size = new System.Drawing.Size(632, 392);
+            this.Size = new System.Drawing.Size(2782, 776);
+            this.grpOrgSettings.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridOrgSettings)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
+
         }
     }
 }
