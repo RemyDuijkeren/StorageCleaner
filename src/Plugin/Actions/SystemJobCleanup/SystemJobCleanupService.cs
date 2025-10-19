@@ -33,39 +33,40 @@ public class SystemJobCleanupService
     const string CanceledKey = "CanceledSystemJobPersistenceInDays";
     const string FailedKey = "FailedSystemJobPersistenceInDays";
 
-    public SystemJobCleanupSettings Load(IOrganizationService service, Guid organizationId)
+    public SystemJobCleanupFeature Load(IOrganizationService service, Guid organizationId)
     {
         if (service == null) throw new ArgumentNullException(nameof(service));
+
         var entity = service.Retrieve("organization", organizationId, new ColumnSet("orgdborgsettings"));
         var xml = entity.GetAttributeValue<string>("orgdborgsettings");
 
         var xdoc = ParseXmlOrCreate(xml);
         var root = xdoc.Root;
 
-        var settings = new SystemJobCleanupSettings(); // defaults
+        var settings = new SystemJobCleanupFeature(); // defaults
         if (root != null)
         {
             var enableEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == EnableKey);
             if (enableEl != null && bool.TryParse(enableEl.Value, out var enable))
-                settings.Enable = enable;
+                settings.EnableSystemJobCleanup = enable;
 
             var sucEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == SucceededKey);
             if (sucEl != null && int.TryParse(sucEl.Value, out var suc))
-                settings.SucceededDays = suc;
+                settings.SucceededSystemJobPersistenceInDays = suc;
 
             var canEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == CanceledKey);
             if (canEl != null && int.TryParse(canEl.Value, out var can))
-                settings.CanceledDays = can;
+                settings.CanceledSystemJobPersistenceInDays = can;
 
             var failEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == FailedKey);
             if (failEl != null && int.TryParse(failEl.Value, out var fail))
-                settings.FailedDays = fail;
+                settings.FailedSystemJobPersistenceInDays = fail;
         }
 
-        // clamp softly
-        settings.SucceededDays = Clamp(settings.SucceededDays, 0, 90);
-        settings.CanceledDays = Clamp(settings.CanceledDays, 0, 180);
-        settings.FailedDays = Clamp(settings.FailedDays, 0, 180);
+        // clamp softly using domain feature helpers
+        settings.SucceededSystemJobPersistenceInDays = settings.ClampSucceeded(settings.SucceededSystemJobPersistenceInDays);
+        settings.CanceledSystemJobPersistenceInDays = settings.ClampCanceled(settings.CanceledSystemJobPersistenceInDays);
+        settings.FailedSystemJobPersistenceInDays = settings.ClampFailed(settings.FailedSystemJobPersistenceInDays);
         return settings;
     }
 
@@ -83,14 +84,14 @@ public class SystemJobCleanupService
                ?? new Dictionary<string, string>();
     }
 
-    public (bool ok, string? error) Save(IOrganizationService service, Guid organizationId, SystemJobCleanupSettings settings)
+    public (bool ok, string? error) Save(IOrganizationService service, Guid organizationId, SystemJobCleanupFeature feature)
     {
         if (service == null) throw new ArgumentNullException(nameof(service));
-        if (settings == null) throw new ArgumentNullException(nameof(settings));
+        if (feature == null) throw new ArgumentNullException(nameof(feature));
 
-        var validation = Validate(settings);
-        if (validation != null)
-            return (false, validation);
+        var (ok, error) = feature.Validate();
+        if (!ok)
+            return (false, error);
 
         // Load existing to preserve unrelated settings
         var entity = service.Retrieve("organization", organizationId, new ColumnSet("orgdborgsettings"));
@@ -100,10 +101,10 @@ public class SystemJobCleanupService
         if (xdoc.Root == null) xdoc.Add(root);
 
         // Merge only four keys (create or update). Keep other elements intact.
-        SetElement(root, EnableKey, settings.Enable.ToString().ToLowerInvariant());
-        SetElement(root, SucceededKey, settings.SucceededDays.ToString());
-        SetElement(root, CanceledKey, settings.CanceledDays.ToString());
-        SetElement(root, FailedKey, settings.FailedDays.ToString());
+        SetElement(root, EnableKey, feature.EnableSystemJobCleanup.ToString().ToLowerInvariant());
+        SetElement(root, SucceededKey, feature.SucceededSystemJobPersistenceInDays.ToString());
+        SetElement(root, CanceledKey, feature.CanceledSystemJobPersistenceInDays.ToString());
+        SetElement(root, FailedKey, feature.FailedSystemJobPersistenceInDays.ToString());
 
         // Update organization entity
         var update = new Entity("organization")
@@ -116,18 +117,6 @@ public class SystemJobCleanupService
         return (true, null);
     }
 
-    static string? Validate(SystemJobCleanupSettings s)
-    {
-        if (s.SucceededDays is < 0 or > 90)
-            return "SucceededDays must be between 0 and 90.";
-        if (s.CanceledDays is < 0 or > 180)
-            return "CanceledDays must be between 0 and 180.";
-        if (s.FailedDays is < 0 or > 180)
-            return "FailedDays must be between 0 and 180.";
-        return null;
-    }
-
-    static int Clamp(int value, int min, int max) => value < min ? min : (value > max ? max : value);
 
     static XDocument ParseXmlOrCreate(string? xml)
     {

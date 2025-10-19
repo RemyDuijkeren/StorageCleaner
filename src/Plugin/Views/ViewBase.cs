@@ -1,6 +1,8 @@
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows.Forms;
 using XrmToolBox.Extensibility;
+using XrmToolBox.Extensibility.Interfaces;
 
 namespace StorageCleaner.Views;
 

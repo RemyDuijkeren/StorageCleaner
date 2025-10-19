@@ -6,26 +6,26 @@ namespace StorageCleaner.Actions.SystemJobCleanup;
 public partial class SystemJobCleanupActionControl : ActionControl
 {
     readonly SystemJobCleanupService _service = new();
-    SystemJobCleanupSettings _systemJobCleanupSettings = new();
+    SystemJobCleanupFeature _feature = new();
 
     public SystemJobCleanupActionControl()
     {
         InitializeComponent();
 
         // Initialize UI with default property values
-        chkEnableSystemJobCleanup.Checked = _systemJobCleanupSettings.Enable;
+        chkEnableSystemJobCleanup.Checked = _feature.EnableSystemJobCleanup;
 
         numSucceededDays.Minimum = 0;
-        numSucceededDays.Maximum = 90;
-        numSucceededDays.Value = Math.Min(Math.Max(_systemJobCleanupSettings.SucceededDays, (int)numSucceededDays.Minimum), (int)numSucceededDays.Maximum);
+        numSucceededDays.Maximum = _feature.MaxPersistenceDaysForSucceededSystemJobs;
+        numSucceededDays.Value = Math.Min(Math.Max(_feature.SucceededSystemJobPersistenceInDays, (int)numSucceededDays.Minimum), (int)numSucceededDays.Maximum);
 
         numCanceledDays.Minimum = 0;
-        numCanceledDays.Maximum = 180;
-        numCanceledDays.Value = Math.Min(Math.Max(_systemJobCleanupSettings.CanceledDays, (int)numCanceledDays.Minimum), (int)numCanceledDays.Maximum);
+        numCanceledDays.Maximum = _feature.MaxPersistenceDaysForCanceledOrFailedSystemJobs;
+        numCanceledDays.Value = Math.Min(Math.Max(_feature.CanceledSystemJobPersistenceInDays, (int)numCanceledDays.Minimum), (int)numCanceledDays.Maximum);
 
         numFailedDays.Minimum = 0;
-        numFailedDays.Maximum = 180;
-        numFailedDays.Value = Math.Min(Math.Max(_systemJobCleanupSettings.FailedDays, (int)numFailedDays.Minimum), (int)numFailedDays.Maximum);
+        numFailedDays.Maximum = _feature.MaxPersistenceDaysForCanceledOrFailedSystemJobs;
+        numFailedDays.Value = Math.Min(Math.Max(_feature.FailedSystemJobPersistenceInDays, (int)numFailedDays.Minimum), (int)numFailedDays.Maximum);
 
         // Disable inputs until settings are loaded (Analyze)
         chkEnableSystemJobCleanup.Enabled = false;
@@ -68,16 +68,16 @@ public partial class SystemJobCleanupActionControl : ActionControl
                 return;
             }
 
-            var (settings, orgSettings) = ((SystemJobCleanupSettings settings, Dictionary<string, string> all) )args.Result;
+            var (settings, orgSettings) = ((SystemJobCleanupFeature settings, Dictionary<string, string> all) )args.Result;
 
             // Bind to controls
-            chkEnableSystemJobCleanup.Checked = settings.Enable;
-            numSucceededDays.Value = Math.Min(Math.Max(settings.SucceededDays, (int)numSucceededDays.Minimum), (int)numSucceededDays.Maximum);
-            numCanceledDays.Value = Math.Min(Math.Max(settings.CanceledDays, (int)numCanceledDays.Minimum), (int)numCanceledDays.Maximum);
-            numFailedDays.Value = Math.Min(Math.Max(settings.FailedDays, (int)numFailedDays.Minimum), (int)numFailedDays.Maximum);
+            chkEnableSystemJobCleanup.Checked = settings.EnableSystemJobCleanup;
+            numSucceededDays.Value = Math.Min(Math.Max(settings.SucceededSystemJobPersistenceInDays, (int)numSucceededDays.Minimum), (int)numSucceededDays.Maximum);
+            numCanceledDays.Value = Math.Min(Math.Max(settings.CanceledSystemJobPersistenceInDays, (int)numCanceledDays.Minimum), (int)numCanceledDays.Maximum);
+            numFailedDays.Value = Math.Min(Math.Max(settings.FailedSystemJobPersistenceInDays, (int)numFailedDays.Minimum), (int)numFailedDays.Maximum);
 
             // Update backing field
-            _systemJobCleanupSettings = settings;
+            _feature = settings;
 
             // Populate the grid with settings
             gridOrgSettings.SuspendLayout();
@@ -98,7 +98,7 @@ public partial class SystemJobCleanupActionControl : ActionControl
         Work = (worker, args) =>
         {
             var orgId = Host.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
-            args.Result = _service.Save(Host.Service, orgId, _systemJobCleanupSettings);
+            args.Result = _service.Save(Host.Service, orgId, _feature);
         },
         PostWorkCallBack = args =>
         {
@@ -122,23 +122,23 @@ public partial class SystemJobCleanupActionControl : ActionControl
 
     private void chkEnableSystemJobCleanup_CheckedChanged(object sender, EventArgs e)
     {
-        _systemJobCleanupSettings.Enable = chkEnableSystemJobCleanup.Checked;
+        _feature.EnableSystemJobCleanup = chkEnableSystemJobCleanup.Checked;
         UpdateInputsEnabledState();
     }
 
     private void numSucceededDays_ValueChanged(object sender, EventArgs e)
     {
-        _systemJobCleanupSettings.SucceededDays = (int)numSucceededDays.Value;
+        _feature.SucceededSystemJobPersistenceInDays = (int)numSucceededDays.Value;
     }
 
     private void numCanceledDays_ValueChanged(object sender, EventArgs e)
     {
-        _systemJobCleanupSettings.CanceledDays = (int)numCanceledDays.Value;
+        _feature.CanceledSystemJobPersistenceInDays = (int)numCanceledDays.Value;
     }
 
     private void numFailedDays_ValueChanged(object sender, EventArgs e)
     {
-        _systemJobCleanupSettings.FailedDays = (int)numFailedDays.Value;
+        _feature.FailedSystemJobPersistenceInDays = (int)numFailedDays.Value;
     }
 
     private void UpdateInputsEnabledState()

@@ -70,7 +70,7 @@
             this.grpOrgSettings.Controls.Add(this.gridOrgSettings);
             this.grpOrgSettings.Location = new System.Drawing.Point(15, 337);
             this.grpOrgSettings.Name = "grpOrgSettings";
-            this.grpOrgSettings.Size = new System.Drawing.Size(604, 419);
+            this.grpOrgSettings.Size = new System.Drawing.Size(431, 419);
             this.grpOrgSettings.TabIndex = 4;
             this.grpOrgSettings.TabStop = false;
             this.grpOrgSettings.Text = "Organization settings";
@@ -90,7 +90,7 @@
             this.gridOrgSettings.ReadOnly = true;
             this.gridOrgSettings.RowHeadersVisible = false;
             this.gridOrgSettings.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridOrgSettings.Size = new System.Drawing.Size(598, 400);
+            this.gridOrgSettings.Size = new System.Drawing.Size(425, 400);
             this.gridOrgSettings.TabIndex = 0;
             // 
             // colSetting
@@ -119,17 +119,17 @@
             this.grpSystemJobCleanup.Controls.Add(this.chkEnableSystemJobCleanup);
             this.grpSystemJobCleanup.Location = new System.Drawing.Point(15, 48);
             this.grpSystemJobCleanup.Name = "grpSystemJobCleanup";
-            this.grpSystemJobCleanup.Size = new System.Drawing.Size(604, 174);
+            this.grpSystemJobCleanup.Size = new System.Drawing.Size(431, 174);
             this.grpSystemJobCleanup.TabIndex = 5;
             this.grpSystemJobCleanup.TabStop = false;
             this.grpSystemJobCleanup.Text = "System Job Cleanup";
             // 
             // numFailedDays
             // 
-            this.numFailedDays.Location = new System.Drawing.Point(270, 109);
+            this.numFailedDays.Location = new System.Drawing.Point(227, 109);
             this.numFailedDays.Maximum = new decimal(new int[] { 180, 0, 0, 0 });
             this.numFailedDays.Name = "numFailedDays";
-            this.numFailedDays.Size = new System.Drawing.Size(80, 20);
+            this.numFailedDays.Size = new System.Drawing.Size(51, 20);
             this.numFailedDays.TabIndex = 6;
             this.numFailedDays.ValueChanged += new System.EventHandler(this.numFailedDays_ValueChanged);
             // 
@@ -138,16 +138,16 @@
             this.lblFailed.AutoSize = true;
             this.lblFailed.Location = new System.Drawing.Point(13, 111);
             this.lblFailed.Name = "lblFailed";
-            this.lblFailed.Size = new System.Drawing.Size(215, 13);
+            this.lblFailed.Size = new System.Drawing.Size(181, 13);
             this.lblFailed.TabIndex = 5;
-            this.lblFailed.Text = "Failed persistence (days, 0 - 180, default 60)";
+            this.lblFailed.Text = "Delete Failed system jobs after (days)";
             // 
             // numCanceledDays
             // 
-            this.numCanceledDays.Location = new System.Drawing.Point(270, 81);
+            this.numCanceledDays.Location = new System.Drawing.Point(227, 81);
             this.numCanceledDays.Maximum = new decimal(new int[] { 180, 0, 0, 0 });
             this.numCanceledDays.Name = "numCanceledDays";
-            this.numCanceledDays.Size = new System.Drawing.Size(80, 20);
+            this.numCanceledDays.Size = new System.Drawing.Size(51, 20);
             this.numCanceledDays.TabIndex = 4;
             this.numCanceledDays.ValueChanged += new System.EventHandler(this.numCanceledDays_ValueChanged);
             // 
@@ -156,16 +156,16 @@
             this.lblCanceled.AutoSize = true;
             this.lblCanceled.Location = new System.Drawing.Point(13, 83);
             this.lblCanceled.Name = "lblCanceled";
-            this.lblCanceled.Size = new System.Drawing.Size(232, 13);
+            this.lblCanceled.Size = new System.Drawing.Size(198, 13);
             this.lblCanceled.TabIndex = 3;
-            this.lblCanceled.Text = "Canceled persistence (days, 0 - 180, default 60)";
+            this.lblCanceled.Text = "Delete Canceled system jobs after (days)";
             // 
             // numSucceededDays
             // 
-            this.numSucceededDays.Location = new System.Drawing.Point(270, 50);
+            this.numSucceededDays.Location = new System.Drawing.Point(227, 50);
             this.numSucceededDays.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
             this.numSucceededDays.Name = "numSucceededDays";
-            this.numSucceededDays.Size = new System.Drawing.Size(80, 20);
+            this.numSucceededDays.Size = new System.Drawing.Size(51, 20);
             this.numSucceededDays.TabIndex = 2;
             this.numSucceededDays.ValueChanged += new System.EventHandler(this.numSucceededDays_ValueChanged);
             // 
@@ -174,9 +174,9 @@
             this.lblSucceeded.AutoSize = true;
             this.lblSucceeded.Location = new System.Drawing.Point(13, 52);
             this.lblSucceeded.Name = "lblSucceeded";
-            this.lblSucceeded.Size = new System.Drawing.Size(236, 13);
+            this.lblSucceeded.Size = new System.Drawing.Size(208, 13);
             this.lblSucceeded.TabIndex = 1;
-            this.lblSucceeded.Text = "Succeeded persistence (days, 0 - 90, default 30)";
+            this.lblSucceeded.Text = "Delete Succeeded system jobs after (days)";
             // 
             // chkEnableSystemJobCleanup
             // 
@@ -191,7 +191,8 @@
             // 
             // btnClean
             // 
-            this.btnClean.Location = new System.Drawing.Point(260, 238);
+            this.btnClean.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClean.Location = new System.Drawing.Point(326, 238);
             this.btnClean.Name = "btnClean";
             this.btnClean.Size = new System.Drawing.Size(120, 23);
             this.btnClean.TabIndex = 6;
@@ -206,7 +207,7 @@
             this.Controls.Add(this.grpOrgSettings);
             this.Controls.Add(this.btnAnalyze);
             this.Name = "SystemJobCleanupActionControl";
-            this.Size = new System.Drawing.Size(636, 776);
+            this.Size = new System.Drawing.Size(454, 776);
             this.grpOrgSettings.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridOrgSettings)).EndInit();
             this.grpSystemJobCleanup.ResumeLayout(false);
