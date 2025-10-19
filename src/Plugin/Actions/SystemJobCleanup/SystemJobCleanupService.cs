@@ -4,6 +4,22 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace StorageCleaner.Actions.SystemJobCleanup;
 
+//https://learn.microsoft.com/en-us/power-platform/admin/cleanup-asyncoperationbase-table?tabs=new#set-retention-policy
+// https://learn.microsoft.com/en-us/power-platform/admin/cleanup-asyncoperationbase-table
+// <OrgSettings>
+//     <IsRetentionEnabled>true</IsRetentionEnabled>
+//     <IsArchivalEnabled>true</IsArchivalEnabled>
+//     <IsPreferredSolutionEnabled>true</IsPreferredSolutionEnabled>
+//     <TDSListenerInitialized>3</TDSListenerInitialized>
+//     <CreateOnlyNonEmptyAddressRecordsForEligibleEntities>true</CreateOnlyNonEmptyAddressRecordsForEligibleEntities>
+//     <IsMRUDataIngestionToSubstrateEnabled>true</IsMRUDataIngestionToSubstrateEnabled>
+//     <SearchAndCopilotIndexMode>1</SearchAndCopilotIndexMode>
+//     <EnableSystemJobCleanup>true</EnableSystemJobCleanup>
+//     <CanceledSystemJobPersistenceInDays>10</CanceledSystemJobPersistenceInDays>
+//     <FailedSystemJobPersistenceInDays>10</FailedSystemJobPersistenceInDays>
+//     <SucceededSystemJobPersistenceInDays>5</SucceededSystemJobPersistenceInDays>
+// </OrgSettings>
+
 /// <summary>
 /// Single service responsible for loading/saving orgdborgsettings for System Job Cleanup.
 /// Performs validation, XML parsing and merging while preserving unrelated settings.
@@ -11,51 +27,63 @@ namespace StorageCleaner.Actions.SystemJobCleanup;
 public class SystemJobCleanupService
 {
     // XML element names in orgdborgsettings
-    const string RootName = "OrgSettings"; // observed in sample; if not present, accept any root
+    const string RootName = "OrgSettings";
     const string EnableKey = "EnableSystemJobCleanup";
     const string SucceededKey = "SucceededSystemJobPersistenceInDays";
     const string CanceledKey = "CanceledSystemJobPersistenceInDays";
     const string FailedKey = "FailedSystemJobPersistenceInDays";
 
-    public async Task<SystemJobCleanupSettings> LoadAsync(IOrganizationService service, Guid organizationId)
-    {
-        var (settings, _) = await LoadAllAsync(service, organizationId);
-        return settings;
-    }
-
-    /// <summary>
-    /// Loads the current orgdborgsettings and returns both the typed settings and the full settings dictionary
-    /// for display purposes.
-    /// </summary>
-    public async Task<(SystemJobCleanupSettings settings, Dictionary<string, string> allSettings)> LoadAllAsync(IOrganizationService service, Guid organizationId)
+    public SystemJobCleanupSettings Load(IOrganizationService service, Guid organizationId)
     {
         if (service == null) throw new ArgumentNullException(nameof(service));
         var entity = service.Retrieve("organization", organizationId, new ColumnSet("orgdborgsettings"));
         var xml = entity.GetAttributeValue<string>("orgdborgsettings");
 
         var xdoc = ParseXmlOrCreate(xml);
-        var dict = xdoc.Root?.Elements().ToDictionary(e => e.Name.LocalName, e => e.Value)
-                   ?? new Dictionary<string, string>();
+        var root = xdoc.Root;
 
-        var settings = new SystemJobCleanupSettings(); // starts with defaults
-        if (dict.TryGetValue(EnableKey, out var enableStr) && bool.TryParse(enableStr, out var enable))
-            settings.Enable = enable;
-        if (dict.TryGetValue(SucceededKey, out var sucStr) && int.TryParse(sucStr, out var suc))
-            settings.SucceededDays = suc;
-        if (dict.TryGetValue(CanceledKey, out var canStr) && int.TryParse(canStr, out var can))
-            settings.CanceledDays = can;
-        if (dict.TryGetValue(FailedKey, out var failStr) && int.TryParse(failStr, out var fail))
-            settings.FailedDays = fail;
+        var settings = new SystemJobCleanupSettings(); // defaults
+        if (root != null)
+        {
+            var enableEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == EnableKey);
+            if (enableEl != null && bool.TryParse(enableEl.Value, out var enable))
+                settings.Enable = enable;
 
-        // validate ranges softly (clamp to valid if data exists out of range)
+            var sucEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == SucceededKey);
+            if (sucEl != null && int.TryParse(sucEl.Value, out var suc))
+                settings.SucceededDays = suc;
+
+            var canEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == CanceledKey);
+            if (canEl != null && int.TryParse(canEl.Value, out var can))
+                settings.CanceledDays = can;
+
+            var failEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == FailedKey);
+            if (failEl != null && int.TryParse(failEl.Value, out var fail))
+                settings.FailedDays = fail;
+        }
+
+        // clamp softly
         settings.SucceededDays = Clamp(settings.SucceededDays, 0, 90);
         settings.CanceledDays = Clamp(settings.CanceledDays, 0, 180);
         settings.FailedDays = Clamp(settings.FailedDays, 0, 180);
-
-        return await Task.FromResult((settings, dict));
+        return settings;
     }
 
-    public async Task<(bool ok, string? error)> SaveAsync(IOrganizationService service, Guid organizationId, SystemJobCleanupSettings settings)
+    /// <summary>
+    /// Loads the current orgdborgsettings and returns the full settings dictionary.
+    /// This is primarily for diagnostics/development and may be removed later.
+    /// </summary>
+    public Dictionary<string, string> LoadDictionary(IOrganizationService service, Guid organizationId)
+    {
+        if (service == null) throw new ArgumentNullException(nameof(service));
+        var entity = service.Retrieve("organization", organizationId, new ColumnSet("orgdborgsettings"));
+        var xml = entity.GetAttributeValue<string>("orgdborgsettings");
+        var xdoc = ParseXmlOrCreate(xml);
+        return xdoc.Root?.Elements().ToDictionary(e => e.Name.LocalName, e => e.Value)
+               ?? new Dictionary<string, string>();
+    }
+
+    public (bool ok, string? error) Save(IOrganizationService service, Guid organizationId, SystemJobCleanupSettings settings)
     {
         if (service == null) throw new ArgumentNullException(nameof(service));
         if (settings == null) throw new ArgumentNullException(nameof(settings));
@@ -85,7 +113,7 @@ public class SystemJobCleanupService
         update["orgdborgsettings"] = xdoc.ToString(SaveOptions.DisableFormatting);
         service.Update(update);
 
-        return await Task.FromResult<(bool ok, string? error)>((true, null));
+        return (true, null);
     }
 
     static string? Validate(SystemJobCleanupSettings s)

@@ -10,4 +10,10 @@ public class SystemJobCleanupSettings
     public int SucceededDays { get; set; } = 30; // 0-90
     public int CanceledDays { get; set; } = 60;   // 0-180
     public int FailedDays { get; set; } = 60;     // 0-180
+
+    // // Backing fields mirror the POCO for easy binding
+    // bool EnableSystemJobCleanup { get; set; } = true;
+    // int SucceededSystemJobPersistenceInDays { get; set; } = 30;
+    // int CanceledSystemJobPersistenceInDays { get; set; } = 60;
+    // int FailedSystemJobPersistenceInDays { get; set; } = 60;
 }
