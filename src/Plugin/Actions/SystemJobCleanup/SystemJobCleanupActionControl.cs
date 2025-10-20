@@ -34,28 +34,22 @@ public partial class SystemJobCleanupActionControl : ActionControl
         numFailedDays.Enabled = false;
     }
 
-    public override void AnalyzeClick(object sender, EventArgs e)
-    {
-        Host.ExecuteMethod(LoadSettings);
-    }
+    public override void AnalyzeClick(object sender, EventArgs e) => ExecuteMethod(LoadSettings);
 
-    public override void CleanClick(object sender, EventArgs e)
-    {
-        Host.ExecuteMethod(SaveSettings);
-    }
+    public override void CleanClick(object sender, EventArgs e) => ExecuteMethod(SaveSettings);
 
-    void LoadSettings() => Host.WorkAsync(new WorkAsyncInfo
+    void LoadSettings() => WorkAsync(new WorkAsyncInfo
     {
         Message = "Loading system job cleanup settings...",
         Work = (worker, args) =>
         {
-            var orgId = Host.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
+            var orgId = MainControl.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
 
-            var settings = _service.Load(Host.Service, orgId);
+            var settings = _service.Load(MainControl.Service, orgId);
             //Thread.Sleep(2000);
 
-            Host.SetWorkingMessage("Loading orgdborgsettings for grid...");
-            var dict = _service.LoadDictionary(Host.Service, orgId);
+            SetWorkingMessage("Loading orgdborgsettings for grid...");
+            var dict = _service.LoadDictionary(MainControl.Service, orgId);
             //Thread.Sleep(3000);
 
             args.Result = (settings, dict);
@@ -64,7 +58,7 @@ public partial class SystemJobCleanupActionControl : ActionControl
         {
             if (args.Error != null)
             {
-                MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MainControl.ShowErrorDialog(args.Error);
                 return;
             }
 
@@ -92,13 +86,13 @@ public partial class SystemJobCleanupActionControl : ActionControl
         }
     });
 
-    void SaveSettings() => Host.WorkAsync(new WorkAsyncInfo
+    void SaveSettings() => WorkAsync(new WorkAsyncInfo
     {
         Message = "Saving system job cleanup settings...",
         Work = (worker, args) =>
         {
-            var orgId = Host.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
-            args.Result = _service.Save(Host.Service, orgId, _feature);
+            var orgId = MainControl.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
+            args.Result = _service.Save(MainControl.Service, orgId, _feature);
         },
         PostWorkCallBack = args =>
         {

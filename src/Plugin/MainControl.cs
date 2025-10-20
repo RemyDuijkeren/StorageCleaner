@@ -1,8 +1,9 @@
 ﻿using XrmToolBox.Extensibility;
+using XrmToolBox.Extensibility.Interfaces;
 
 namespace StorageCleaner;
 
-public partial class MainControl : PluginControlBase
+public partial class MainControl : PluginControlBase, IGitHubPlugin, IAboutPlugin
 {
     public MainControl()
     {
@@ -66,4 +67,7 @@ public partial class MainControl : PluginControlBase
     //     // No need to update context on views; they read Service/Connection from Host dynamically
     //     jobsView.RefreshJobs();
     // }
+    public string RepositoryName => "DataverseStorageCleaner";
+    public string UserName => "remyduijkeren";
+    public void ShowAboutDialog() => MessageBox.Show(@"This is a sample tool", @"About Sample Tool", MessageBoxButtons.OK, MessageBoxIcon.Information);
 }

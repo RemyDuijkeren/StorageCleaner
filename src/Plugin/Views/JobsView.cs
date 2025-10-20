@@ -1,6 +1,6 @@
 namespace StorageCleaner.Views;
 
-public partial class JobsView : ViewBase
+public partial class JobsView : PluginUserControlBase
 {
     public JobsView()
     {

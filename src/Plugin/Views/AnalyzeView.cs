@@ -1,6 +1,8 @@
+using XrmToolBox.Extensibility;
+
 namespace StorageCleaner.Views;
 
-public partial class AnalyzeView : ViewBase
+public partial class AnalyzeView : PluginUserControlBase
 {
     public AnalyzeView()
     {

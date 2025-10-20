@@ -3,7 +3,7 @@ using StorageCleaner.Actions;
 
 namespace StorageCleaner.Views;
 
-public partial class ActionsView : ViewBase
+public partial class ActionsView : PluginUserControlBase
 {
     private sealed class ActionItem
     {
@@ -73,7 +73,7 @@ public partial class ActionsView : ViewBase
                 throw new InvalidOperationException($"Could not create action control: {item.DisplayName}");
 
             ctrl.Dock = DockStyle.Fill;
-            ctrl.Initialize(Host);
+            ctrl.Initialize(MainControl);
 
             pnlHost.SuspendLayout();
             pnlHost.Controls.Clear();
