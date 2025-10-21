@@ -1,21 +1,13 @@
 using System.Reflection;
 using StorageCleaner.Actions;
-
 namespace StorageCleaner.Views;
 
 public partial class ActionsView : PluginUserControlBase
 {
-    private sealed class ActionItem
-    {
-        public Type Type { get; set; }
-        public string Id { get; set; }
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
-        public override string ToString() => DisplayName;
-    }
+    record ActionItem(Type Type, string Id, string DisplayName, string Description);
 
-    private readonly List<ActionItem> _items = new();
-    private ActionControl? _current;
+    readonly List<ActionItem> _items = new();
+    ActionControl? _current;
 
     public ActionsView()
     {
@@ -24,7 +16,7 @@ public partial class ActionsView : PluginUserControlBase
         this.Load += ActionsView_Load;
     }
 
-    private void ActionsView_Load(object? sender, EventArgs e)
+    void ActionsView_Load(object? sender, EventArgs e)
     {
         try
         {
@@ -32,23 +24,17 @@ public partial class ActionsView : PluginUserControlBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to load actions: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MainControl.ShowErrorDialog(ex, "Failed to load actions");
         }
     }
 
-    private void LoadActions()
+    void LoadActions()
     {
         _items.Clear();
 
         foreach ((Type type, ActionAttribute attribute) in FindActions(Assembly.GetExecutingAssembly()))
         {
-            _items.Add(new ActionItem
-            {
-                Type = type,
-                Id = attribute.Id,
-                DisplayName = attribute.DisplayName,
-                Description = attribute.Description
-            });
+            _items.Add(new ActionItem(type, attribute.Id, attribute.DisplayName, attribute.Description));
         }
 
         lstActions.DataSource = null;
@@ -62,14 +48,14 @@ public partial class ActionsView : PluginUserControlBase
         }
     }
 
-    private void lstActions_SelectedIndexChanged(object? sender, EventArgs e)
+    void lstActions_SelectedIndexChanged(object? sender, EventArgs e)
     {
         if (lstActions.SelectedItem is not ActionItem item)
             return;
 
         try
         {
-            if (!(Activator.CreateInstance(item.Type) is ActionControl ctrl))
+            if (Activator.CreateInstance(item.Type) is not ActionControl ctrl)
                 throw new InvalidOperationException($"Could not create action control: {item.DisplayName}");
 
             ctrl.Dock = DockStyle.Fill;
@@ -84,7 +70,7 @@ public partial class ActionsView : PluginUserControlBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to open action '{item.DisplayName}': {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MainControl.ShowErrorDialog(ex, $"Failed to load action '{item.DisplayName}'");
         }
     }
 

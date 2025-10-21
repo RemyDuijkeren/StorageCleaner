@@ -9,6 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>StorageCleaner</RootNamespace>
     <AssemblyName>StorageCleaner</AssemblyName>
+<!--    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>-->
 
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreLockedMode Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreLockedMode>
