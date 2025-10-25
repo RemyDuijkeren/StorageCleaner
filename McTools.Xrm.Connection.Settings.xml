@@ -4,6 +4,7 @@
   <NumberOfRecentConnectionsToDisplay>10</NumberOfRecentConnectionsToDisplay>
   <ShowMostRecentConnections>false</ShowMostRecentConnections>
   <ShowSearchBarInCompactSelector>false</ShowSearchBarInCompactSelector>
-  <UseDetailsViewForConnectionManager>true</UseDetailsViewForConnectionManager>
+  <UseDetailsViewForConnectionManager>false</UseDetailsViewForConnectionManager>
   <UseDetailsViewForConnectionSelector>false</UseDetailsViewForConnectionSelector>
+  <UseFilterForAdditionalConnection>true</UseFilterForAdditionalConnection>
 </Settings>

@@ -10,7 +10,6 @@ public partial class MainControl : PluginControlBase, IGitHubPlugin, IAboutPlugi
         InitializeComponent();
 
         // Wire cross-view navigation/events
-        analyzeView.CreateActionRequested += (s, e) => tabMain.SelectedTab = tabActions;
     }
 
     void MainControl_Load(object sender, EventArgs e)
@@ -29,7 +28,6 @@ public partial class MainControl : PluginControlBase, IGitHubPlugin, IAboutPlugi
         // }
 
         // Initialize subviews with host and settings (Service/Connection are accessed through Host)
-        analyzeView.Initialize(this);
         actionsView.Initialize(this);
         jobsView.Initialize(this);
         settingsView.Initialize(this);
@@ -39,9 +37,9 @@ public partial class MainControl : PluginControlBase, IGitHubPlugin, IAboutPlugi
 
     void tsbSample_Click(object sender, EventArgs e)
     {
-        // Navigate to Analyze tab as a quick entry point
-        tabMain.SelectedTab = tabAnalyze;
-        MessageBox.Show("Use 'View sample' on Analyze tab to fetch sample data.");
+        // Navigate to Actions tab as a quick entry point
+        tabMain.SelectedTab = tabActions;
+        MessageBox.Show("Open the Actions tab to run cleanup actions.");
     }
 
     // /// <summary>This event occurs when the plugin is closed</summary>

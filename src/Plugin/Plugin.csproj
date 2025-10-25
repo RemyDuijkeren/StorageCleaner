@@ -17,14 +17,14 @@
   </PropertyGroup>
 
   <PropertyGroup Label="PackageProperties">
-    <PackageId>DataverseStorageCleaner</PackageId>
+    <PackageId>StorageCleaner</PackageId>
     <Description>XrmToolBox tool for analyzing and cleaning up Dataverse storage by removing old system jobs, logs, emails, and attachments.</Description>
     <Company>AutomateValue</Company>
     <Copyright>Copyright (c) Remy van Duijkeren 2025</Copyright>
     <Authors>Remy van Duijkeren (@RemyDuijkeren)</Authors>
     <PackageProjectUrl>https://github.com/RemyDuijkeren/StorageCleaner</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-<!--    <PackageIcon>StorageCleaner-icon.png</PackageIcon>-->
+    <PackageIcon>StorageCleaner-icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/RemyDuijkeren/StorageCleaner.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -95,6 +95,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\README.md">
+      <Link>README.md</Link>
+    </Content>
   </ItemGroup>
 
   <PropertyGroup>

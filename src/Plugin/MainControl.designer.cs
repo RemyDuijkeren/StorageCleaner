@@ -26,8 +26,6 @@ namespace StorageCleaner
             this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbSample = new System.Windows.Forms.ToolStripButton();
             this.tabMain = new System.Windows.Forms.TabControl();
-            this.tabAnalyze = new System.Windows.Forms.TabPage();
-            this.analyzeView = new StorageCleaner.Views.AnalyzeView();
             this.tabActions = new System.Windows.Forms.TabPage();
             this.actionsView = new StorageCleaner.Views.ActionsView();
             this.tabJobs = new System.Windows.Forms.TabPage();
@@ -36,7 +34,6 @@ namespace StorageCleaner
             this.settingsView = new StorageCleaner.Views.SettingsView();
             this.toolStripMenu.SuspendLayout();
             this.tabMain.SuspendLayout();
-            this.tabAnalyze.SuspendLayout();
             this.tabActions.SuspendLayout();
             this.tabJobs.SuspendLayout();
             this.tabSettings.SuspendLayout();
@@ -76,7 +73,6 @@ namespace StorageCleaner
             // tabMain
             //
             this.tabMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabMain.Controls.Add(this.tabAnalyze);
             this.tabMain.Controls.Add(this.tabActions);
             this.tabMain.Controls.Add(this.tabJobs);
             this.tabMain.Controls.Add(this.tabSettings);
@@ -86,24 +82,6 @@ namespace StorageCleaner
             this.tabMain.Size = new System.Drawing.Size(800, 472);
             this.tabMain.TabIndex = 5;
             //
-            // tabAnalyze
-            //
-            this.tabAnalyze.Controls.Add(this.analyzeView);
-            this.tabAnalyze.Location = new System.Drawing.Point(4, 22);
-            this.tabAnalyze.Name = "tabAnalyze";
-            this.tabAnalyze.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAnalyze.Size = new System.Drawing.Size(792, 446);
-            this.tabAnalyze.TabIndex = 0;
-            this.tabAnalyze.Text = "Analyze";
-            this.tabAnalyze.UseVisualStyleBackColor = true;
-            //
-            // analyzeView
-            //
-            this.analyzeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.analyzeView.Location = new System.Drawing.Point(3, 3);
-            this.analyzeView.Name = "analyzeView";
-            this.analyzeView.Size = new System.Drawing.Size(786, 440);
-            this.analyzeView.TabIndex = 0;
             //
             // tabActions
             //
@@ -174,7 +152,6 @@ namespace StorageCleaner
             this.toolStripMenu.ResumeLayout(false);
             this.toolStripMenu.PerformLayout();
             this.tabMain.ResumeLayout(false);
-            this.tabAnalyze.ResumeLayout(false);
             this.tabActions.ResumeLayout(false);
             this.tabJobs.ResumeLayout(false);
             this.tabSettings.ResumeLayout(false);
@@ -183,11 +160,9 @@ namespace StorageCleaner
         }
 
         private System.Windows.Forms.TabControl tabMain;
-        private System.Windows.Forms.TabPage tabAnalyze;
         private System.Windows.Forms.TabPage tabActions;
         private System.Windows.Forms.TabPage tabJobs;
         private System.Windows.Forms.TabPage tabSettings;
-        private AnalyzeView analyzeView;
         private StorageCleaner.Views.ActionsView actionsView;
         private JobsView jobsView;
         private SettingsView settingsView;
