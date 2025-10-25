@@ -7,7 +7,7 @@ namespace Plugin.Tests.Actions.SystemJobCleanup;
 
 public class SystemJobCleanupServiceTests
 {
-    private static IOrganizationService CreateServiceReturning(Entity entity)
+    static IOrganizationService CreateServiceReturning(Entity entity)
     {
         var service = Substitute.For<IOrganizationService>();
         service.Retrieve("organization", entity.Id, Arg.Any<ColumnSet>()).Returns(entity);
