@@ -9,7 +9,9 @@
   <Folder Name="/src/">
     <Project Path="src\Plugin\Plugin.csproj" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests\Plugin.Tests\Plugin.Tests.csproj" Type="Classic C#" />
+  </Folder>
   <Folder Name="/workflows/">
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/workflows/release.yml" />

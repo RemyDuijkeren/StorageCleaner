@@ -22,11 +22,11 @@
     <Company>AutomateValue</Company>
     <Copyright>Copyright (c) Remy van Duijkeren 2025</Copyright>
     <Authors>Remy van Duijkeren (@RemyDuijkeren)</Authors>
-    <PackageProjectUrl>https://github.com/RemyDuijkeren/DataverseStorageCleaner</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/RemyDuijkeren/StorageCleaner</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageIcon>DataverseStorageCleaner-icon.png</PackageIcon>
+<!--    <PackageIcon>StorageCleaner-icon.png</PackageIcon>-->
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/RemyDuijkeren/DataverseStorageCleaner.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/RemyDuijkeren/StorageCleaner.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Dataverse Dynamics PowerApps PowerPlatform Storage Cleaning</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
