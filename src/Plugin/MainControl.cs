@@ -8,8 +8,6 @@ public partial class MainControl : PluginControlBase, IGitHubPlugin, IAboutPlugi
     public MainControl()
     {
         InitializeComponent();
-
-        // Wire cross-view navigation/events
     }
 
     void MainControl_Load(object sender, EventArgs e)
@@ -26,11 +24,6 @@ public partial class MainControl : PluginControlBase, IGitHubPlugin, IAboutPlugi
         // {
         //     LogInfo("Settings found and loaded");
         // }
-
-        // Initialize subviews with host and settings (Service/Connection are accessed through Host)
-        actionsView.Initialize(this);
-        jobsView.Initialize(this);
-        settingsView.Initialize(this);
     }
 
     void tsbClose_Click(object sender, EventArgs e) => CloseTool();

@@ -1,10 +1,9 @@
 using System.Reflection;
-using XrmToolBox.Extensibility;
 using StorageCleaner.Actions;
 
 namespace StorageCleaner.Views;
 
-public partial class ActionsView : PluginUserControlBase
+public partial class ActionsView : PluginUserControl
 {
     record ActionItem(Type Type, string Id, string DisplayName, string Description)
     {
@@ -19,26 +18,22 @@ public partial class ActionsView : PluginUserControlBase
     {
         InitializeComponent();
         // Defer loading actions until control is loaded to ensure Handle created
-        this.Load += ActionsView_Load;
+        //this.Load += ActionsView_Load;
+        SafeLoadActions();
     }
 
-    // Ensure that when MainControl calls Initialize, we load actions safely at the right time
-    public new void Initialize(PluginControlBase mainControl)
-    {
-        base.Initialize(mainControl);
-        // If the control is already created and visible, load now; otherwise Load event will handle it
-        if (IsHandleCreated)
-        {
-            SafeLoadActions();
-        }
-    }
 
     void ActionsView_Load(object? sender, EventArgs e)
     {
-        // If not initialized by host yet, skip for now; we'll load in Initialize()
-        if (DesignMode || MainControl == null)
+        if (PluginContext == null)
             return;
         SafeLoadActions();
+
+        // // If the control is already created and visible, load now; otherwise Load event will handle it
+        // if (IsHandleCreated)
+        // {
+        //     SafeLoadActions();
+        // }
     }
 
     void SafeLoadActions()
@@ -51,8 +46,8 @@ public partial class ActionsView : PluginUserControlBase
         }
         catch (Exception ex)
         {
-            if (MainControl != null)
-                MainControl.ShowErrorDialog(ex, "Failed to load actions");
+            if (PluginContext != null)
+                PluginContext.ShowErrorDialog(ex, "Failed to load actions");
             else
                 MessageBox.Show($"Failed to load actions: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
@@ -108,7 +103,6 @@ public partial class ActionsView : PluginUserControlBase
                 throw new InvalidOperationException($"Could not create action control: {item.DisplayName}");
 
             ctrl.Dock = DockStyle.Fill;
-            ctrl.Initialize(MainControl);
 
             pnlHost.SuspendLayout();
             pnlHost.Controls.Clear();
@@ -119,7 +113,7 @@ public partial class ActionsView : PluginUserControlBase
         }
         catch (Exception ex)
         {
-            MainControl.ShowErrorDialog(ex, $"Failed to load action '{item.DisplayName}'");
+            PluginContext.ShowErrorDialog(ex, $"Failed to load action '{item.DisplayName}'");
         }
     }
 

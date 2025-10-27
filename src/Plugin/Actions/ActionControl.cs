@@ -4,7 +4,7 @@
 /// Base class for UI controls hosted inside ActionsView. Keeps dependencies minimal so
 /// the WinForms designer can load without requiring XrmToolBox assemblies.
 /// </summary>
-public class ActionControl : PluginUserControlBase
+public class ActionControl : PluginUserControl
 {
     /// <summary>Optional hook so ActionsView can ask the control to load or analyze the current situation.
     /// </summary>

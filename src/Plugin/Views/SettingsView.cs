@@ -1,6 +1,6 @@
 namespace StorageCleaner.Views;
 
-public partial class SettingsView : PluginUserControlBase
+public partial class SettingsView : PluginUserControl
 {
     public SettingsView()
     {

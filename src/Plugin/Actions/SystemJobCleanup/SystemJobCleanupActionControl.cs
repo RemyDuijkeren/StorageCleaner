@@ -43,13 +43,13 @@ public partial class SystemJobCleanupActionControl : ActionControl
         Message = "Loading system job cleanup settings...",
         Work = (worker, args) =>
         {
-            var orgId = MainControl.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
+            var orgId = PluginContext.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
 
-            var settings = _service.Load(MainControl.Service, orgId);
+            var settings = _service.Load(PluginContext.Service, orgId);
             //Thread.Sleep(2000);
 
             SetWorkingMessage("Loading orgdborgsettings for grid...");
-            var dict = _service.LoadDictionary(MainControl.Service, orgId);
+            var dict = _service.LoadDictionary(PluginContext.Service, orgId);
             //Thread.Sleep(3000);
 
             args.Result = (settings, dict);
@@ -58,7 +58,7 @@ public partial class SystemJobCleanupActionControl : ActionControl
         {
             if (args.Error != null)
             {
-                MainControl.ShowErrorDialog(args.Error);
+                PluginContext.ShowErrorDialog(args.Error);
                 return;
             }
 
@@ -91,8 +91,8 @@ public partial class SystemJobCleanupActionControl : ActionControl
         Message = "Saving system job cleanup settings...",
         Work = (worker, args) =>
         {
-            var orgId = MainControl.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
-            args.Result = _service.Save(MainControl.Service, orgId, _feature);
+            var orgId = PluginContext.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
+            args.Result = _service.Save(PluginContext.Service, orgId, _feature);
         },
         PostWorkCallBack = args =>
         {
