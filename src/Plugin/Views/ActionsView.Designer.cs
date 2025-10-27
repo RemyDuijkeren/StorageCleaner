@@ -51,7 +51,7 @@ namespace StorageCleaner.Views
             this.lstActions.IntegralHeight = false;
             this.lstActions.Name = "lstActions";
             this.lstActions.TabIndex = 0;
-            this.lstActions.DisplayMember = "Name";
+            this.lstActions.DisplayMember = "DisplayName";
             this.lstActions.SelectedIndexChanged += new System.EventHandler(this.lstActions_SelectedIndexChanged);
             //
             // pnlHost

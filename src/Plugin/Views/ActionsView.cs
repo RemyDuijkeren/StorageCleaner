@@ -1,13 +1,19 @@
 using System.Reflection;
+using XrmToolBox.Extensibility;
 using StorageCleaner.Actions;
+
 namespace StorageCleaner.Views;
 
 public partial class ActionsView : PluginUserControlBase
 {
-    record ActionItem(Type Type, string Id, string DisplayName, string Description);
+    record ActionItem(Type Type, string Id, string DisplayName, string Description)
+    {
+        public override string ToString() => DisplayName;
+    }
 
     readonly List<ActionItem> _items = new();
     ActionControl? _current;
+    bool _actionsLoaded;
 
     public ActionsView()
     {
@@ -16,15 +22,39 @@ public partial class ActionsView : PluginUserControlBase
         this.Load += ActionsView_Load;
     }
 
+    // Ensure that when MainControl calls Initialize, we load actions safely at the right time
+    public new void Initialize(PluginControlBase mainControl)
+    {
+        base.Initialize(mainControl);
+        // If the control is already created and visible, load now; otherwise Load event will handle it
+        if (IsHandleCreated)
+        {
+            SafeLoadActions();
+        }
+    }
+
     void ActionsView_Load(object? sender, EventArgs e)
     {
+        // If not initialized by host yet, skip for now; we'll load in Initialize()
+        if (DesignMode || MainControl == null)
+            return;
+        SafeLoadActions();
+    }
+
+    void SafeLoadActions()
+    {
+        if (_actionsLoaded)
+            return;
         try
         {
             LoadActions();
         }
         catch (Exception ex)
         {
-            MainControl.ShowErrorDialog(ex, "Failed to load actions");
+            if (MainControl != null)
+                MainControl.ShowErrorDialog(ex, "Failed to load actions");
+            else
+                MessageBox.Show($"Failed to load actions: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -37,6 +67,9 @@ public partial class ActionsView : PluginUserControlBase
             _items.Add(new ActionItem(type, attribute.Id, attribute.DisplayName, attribute.Description));
         }
 
+        // Temporarily detach to avoid duplicate reloads during rebinding
+        lstActions.SelectedIndexChanged -= lstActions_SelectedIndexChanged;
+
         lstActions.DataSource = null;
         lstActions.DisplayMember = nameof(ActionItem.DisplayName);
         lstActions.ValueMember = nameof(ActionItem.Id);
@@ -45,12 +78,28 @@ public partial class ActionsView : PluginUserControlBase
         if (_items.Count > 0)
         {
             lstActions.SelectedIndex = 0;
+            // Ensure first item loads even if SelectedIndexChanged isn't raised by data binding
+            ShowSelectedAction();
         }
+
+        // Reattach event after initial load
+        lstActions.SelectedIndexChanged += lstActions_SelectedIndexChanged;
+
+        _actionsLoaded = true;
     }
 
     void lstActions_SelectedIndexChanged(object? sender, EventArgs e)
     {
+        ShowSelectedAction();
+    }
+
+    void ShowSelectedAction()
+    {
         if (lstActions.SelectedItem is not ActionItem item)
+            return;
+
+        // If the currently displayed control is already the same type, do nothing to preserve state
+        if (_current != null && _current.GetType() == item.Type)
             return;
 
         try
