@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows.Forms;
-
-namespace StorageCleaner.Actions;
+﻿namespace StorageCleaner.Actions;
 
 /// <summary>
 /// Base class for UI controls hosted inside ActionsView. Provides a uniform bottom action bar
@@ -29,12 +26,8 @@ public partial class ActionControl : PluginUserControl
         set => rtbHelp.Text = value ?? string.Empty;
     }
 
-    /// <summary>Gets or sets the text for the Clean button.</summary>
-    public string CleanButtonText
-    {
-        get => btnClean.Text;
-        set => btnClean.Text = value ?? "Clean";
-    }
+    public Button AnalyzeButton => btnAnalyze;
+    public Button CleanButton => btnClean;
 
     protected override void OnCreateControl()
     {

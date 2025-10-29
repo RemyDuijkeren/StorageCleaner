@@ -3,14 +3,63 @@
 /// <summary>Configuration for cleaning up system jobs within an organization, including retention policies for succeeded, canceled, and failed system jobs.</summary>
 public class SystemJobCleanupFeature
 {
-    public bool EnableSystemJobCleanup { get; set; } = true;
-    public int SucceededSystemJobPersistenceInDays { get; set; } = 30; // 0-90
-    public int CanceledSystemJobPersistenceInDays { get; set; } = 60;   // 0-180
-    public int FailedSystemJobPersistenceInDays { get; set; } = 60;     // 0-180
+    // Backing fields
+    bool _enableSystemJobCleanup = true;
+    int _succeededDays = 30; // 0-90
+    int _canceledDays = 60;  // 0-180
+    int _failedDays = 60;    // 0-180
+
+    // Baseline snapshot loaded from Dataverse to detect changes
+    bool _baselineEnableSystemJobCleanup;
+    int _baselineSucceededDays;
+    int _baselineCanceledDays;
+    int _baselineFailedDays;
+
+    /// <summary>Indicates that one or more properties differ from the loaded baseline.</summary>
+    public bool IsDirty => _enableSystemJobCleanup != _baselineEnableSystemJobCleanup
+    || _succeededDays != _baselineSucceededDays
+    || _canceledDays != _baselineCanceledDays
+    || _failedDays != _baselineFailedDays;
+
+    public bool EnableSystemJobCleanup
+    {
+        get => _enableSystemJobCleanup;
+        set { _enableSystemJobCleanup = value; }
+    }
+
+    public int SucceededSystemJobPersistenceInDays
+    {
+        get => _succeededDays;
+        set { _succeededDays = value; }
+    }
+
+    public int CanceledSystemJobPersistenceInDays
+    {
+        get => _canceledDays;
+        set { _canceledDays = value; }
+    }
+
+    public int FailedSystemJobPersistenceInDays
+    {
+        get => _failedDays;
+        set { _failedDays = value; }
+    }
 
     // Policy constants exposed for UI bounds and consumers
-    public int MaxPersistenceDaysForSucceededSystemJobs { get; } = 90;
-    public int MaxPersistenceDaysForCanceledOrFailedSystemJobs { get; } = 180;
+    public int MaxPersistenceDaysForSucceededSystemJobs => 90;
+    public int MaxPersistenceDaysForCanceledOrFailedSystemJobs => 180;
+
+    /// <summary>
+    /// Capture the current values as the loaded baseline and reset IsDirty=false.
+    /// Call this after loading from Dataverse.
+    /// </summary>
+    public void MarkLoaded()
+    {
+        _baselineEnableSystemJobCleanup = _enableSystemJobCleanup;
+        _baselineSucceededDays = _succeededDays;
+        _baselineCanceledDays = _canceledDays;
+        _baselineFailedDays = _failedDays;
+    }
 
     // Validation centralizes policy enforcement in the domain type
     public (bool ok, string? error) Validate()

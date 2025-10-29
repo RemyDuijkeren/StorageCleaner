@@ -125,6 +125,7 @@
             // 
             this.btnClean.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClean.AutoSize = true;
+            this.btnClean.Enabled = false;
             this.btnClean.Location = new System.Drawing.Point(471, 7);
             this.btnClean.Name = "btnClean";
             this.btnClean.Size = new System.Drawing.Size(120, 23);

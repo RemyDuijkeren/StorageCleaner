@@ -12,8 +12,6 @@ public partial class SystemJobCleanupActionControl : ActionControl
     {
         InitializeComponent();
 
-        CleanButtonText = "Apply";
-
         // Provide contextual help for this action (shown in the base ActionControl help section)
         HelpText = "Configure automatic cleanup of System Jobs (asyncoperation).\n\n" +
                    "Use 'Analyze' to fetch current settings from the connected environment and view related orgdborgsettings.\n" +
@@ -26,17 +24,22 @@ public partial class SystemJobCleanupActionControl : ActionControl
 
         numSucceededDays.Minimum = 0;
         numSucceededDays.Maximum = _feature.MaxPersistenceDaysForSucceededSystemJobs;
-        numSucceededDays.Value = Math.Min(Math.Max(_feature.SucceededSystemJobPersistenceInDays, (int)numSucceededDays.Minimum), (int)numSucceededDays.Maximum);
+        numSucceededDays.Value = _feature.SucceededSystemJobPersistenceInDays;
 
         numCanceledDays.Minimum = 0;
         numCanceledDays.Maximum = _feature.MaxPersistenceDaysForCanceledOrFailedSystemJobs;
-        numCanceledDays.Value = Math.Min(Math.Max(_feature.CanceledSystemJobPersistenceInDays, (int)numCanceledDays.Minimum), (int)numCanceledDays.Maximum);
+        numCanceledDays.Value = _feature.CanceledSystemJobPersistenceInDays;
 
         numFailedDays.Minimum = 0;
         numFailedDays.Maximum = _feature.MaxPersistenceDaysForCanceledOrFailedSystemJobs;
-        numFailedDays.Value = Math.Min(Math.Max(_feature.FailedSystemJobPersistenceInDays, (int)numFailedDays.Minimum), (int)numFailedDays.Maximum);
+        numFailedDays.Value = _feature.FailedSystemJobPersistenceInDays;
 
-        // Disable inputs until settings are loaded (Analyze)
+        // Init Clean button text to Apply and set as disabled
+        CleanButton.Text = "Apply";
+        _feature.MarkLoaded();
+        SetApplyButtonEnabledState();
+
+        // Disable inputs until settings are loaded (Analyze button is clicked)
         chkEnableSystemJobCleanup.Enabled = false;
         numSucceededDays.Enabled = false;
         numCanceledDays.Enabled = false;
@@ -53,15 +56,8 @@ public partial class SystemJobCleanupActionControl : ActionControl
         Work = (worker, args) =>
         {
             var orgId = PluginContext.ConnectionDetail.GetCrmServiceClient().ConnectedOrgId;
-
             var settings = _service.Load(PluginContext.Service, orgId);
-            //Thread.Sleep(2000);
-
-            SetWorkingMessage("Loading orgdborgsettings for grid...");
-            var dict = _service.LoadDictionary(PluginContext.Service, orgId);
-            //Thread.Sleep(3000);
-
-            args.Result = (settings, dict);
+            args.Result = settings;
         },
         PostWorkCallBack = args =>
         {
@@ -71,27 +67,19 @@ public partial class SystemJobCleanupActionControl : ActionControl
                 return;
             }
 
-            var (settings, orgSettings) = ((SystemJobCleanupFeature settings, Dictionary<string, string> all) )args.Result;
+            var settings = (SystemJobCleanupFeature)args.Result;
 
-            // Bind to controls
-            chkEnableSystemJobCleanup.Checked = settings.EnableSystemJobCleanup;
-            numSucceededDays.Value = Math.Min(Math.Max(settings.SucceededSystemJobPersistenceInDays, (int)numSucceededDays.Minimum), (int)numSucceededDays.Maximum);
-            numCanceledDays.Value = Math.Min(Math.Max(settings.CanceledSystemJobPersistenceInDays, (int)numCanceledDays.Minimum), (int)numCanceledDays.Maximum);
-            numFailedDays.Value = Math.Min(Math.Max(settings.FailedSystemJobPersistenceInDays, (int)numFailedDays.Minimum), (int)numFailedDays.Maximum);
-
-            // Update backing field
+            // Update the backing field first
             _feature = settings;
 
-            // Populate the grid with settings
-            gridOrgSettings.SuspendLayout();
-            gridOrgSettings.Rows.Clear();
-            foreach (var kv in orgSettings)
-            {
-                gridOrgSettings.Rows.Add(kv.Key, kv.Value);
-            }
-            gridOrgSettings.ResumeLayout();
+            // Bind to controls without triggering a dirty state
+            chkEnableSystemJobCleanup.Checked = settings.EnableSystemJobCleanup;
+            numSucceededDays.Value = settings.SucceededSystemJobPersistenceInDays;
+            numCanceledDays.Value = settings.CanceledSystemJobPersistenceInDays;
+            numFailedDays.Value = settings.FailedSystemJobPersistenceInDays;
 
-            UpdateInputsEnabledState();
+            UpdateControlEnableStates();
+            SetApplyButtonEnabledState();
         }
     });
 
@@ -123,28 +111,32 @@ public partial class SystemJobCleanupActionControl : ActionControl
         }
     });
 
-    private void chkEnableSystemJobCleanup_CheckedChanged(object sender, EventArgs e)
+    void chkEnableSystemJobCleanup_CheckedChanged(object sender, EventArgs e)
     {
         _feature.EnableSystemJobCleanup = chkEnableSystemJobCleanup.Checked;
-        UpdateInputsEnabledState();
+        UpdateControlEnableStates();
+        SetApplyButtonEnabledState();
     }
 
-    private void numSucceededDays_ValueChanged(object sender, EventArgs e)
+    void numSucceededDays_ValueChanged(object sender, EventArgs e)
     {
         _feature.SucceededSystemJobPersistenceInDays = (int)numSucceededDays.Value;
+        SetApplyButtonEnabledState();
     }
 
-    private void numCanceledDays_ValueChanged(object sender, EventArgs e)
+    void numCanceledDays_ValueChanged(object sender, EventArgs e)
     {
         _feature.CanceledSystemJobPersistenceInDays = (int)numCanceledDays.Value;
+        SetApplyButtonEnabledState();
     }
 
-    private void numFailedDays_ValueChanged(object sender, EventArgs e)
+    void numFailedDays_ValueChanged(object sender, EventArgs e)
     {
         _feature.FailedSystemJobPersistenceInDays = (int)numFailedDays.Value;
+        SetApplyButtonEnabledState();
     }
 
-    private void UpdateInputsEnabledState()
+    void UpdateControlEnableStates()
     {
         chkEnableSystemJobCleanup.Enabled = true;
 
@@ -153,6 +145,8 @@ public partial class SystemJobCleanupActionControl : ActionControl
         numCanceledDays.Enabled = enabled;
         numFailedDays.Enabled = enabled;
     }
+
+    void SetApplyButtonEnabledState() => CleanButton.Enabled = _feature.IsDirty;
 }
 
 // Audit table:

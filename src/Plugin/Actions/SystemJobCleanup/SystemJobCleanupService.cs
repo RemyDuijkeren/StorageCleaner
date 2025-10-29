@@ -43,31 +43,34 @@ public class SystemJobCleanupService
         var xdoc = ParseXmlOrCreate(xml);
         var root = xdoc.Root;
 
-        var settings = new SystemJobCleanupFeature(); // defaults
+        var feature = new SystemJobCleanupFeature(); // defaults
         if (root != null)
         {
             var enableEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == EnableKey);
             if (enableEl != null && bool.TryParse(enableEl.Value, out var enable))
-                settings.EnableSystemJobCleanup = enable;
+                feature.EnableSystemJobCleanup = enable;
 
             var sucEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == SucceededKey);
             if (sucEl != null && int.TryParse(sucEl.Value, out var suc))
-                settings.SucceededSystemJobPersistenceInDays = suc;
+                feature.SucceededSystemJobPersistenceInDays = suc;
 
             var canEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == CanceledKey);
             if (canEl != null && int.TryParse(canEl.Value, out var can))
-                settings.CanceledSystemJobPersistenceInDays = can;
+                feature.CanceledSystemJobPersistenceInDays = can;
 
             var failEl = root.Elements().FirstOrDefault(e => e.Name.LocalName == FailedKey);
             if (failEl != null && int.TryParse(failEl.Value, out var fail))
-                settings.FailedSystemJobPersistenceInDays = fail;
+                feature.FailedSystemJobPersistenceInDays = fail;
         }
 
         // clamp softly using domain feature helpers
-        settings.SucceededSystemJobPersistenceInDays = settings.ClampSucceeded(settings.SucceededSystemJobPersistenceInDays);
-        settings.CanceledSystemJobPersistenceInDays = settings.ClampCanceled(settings.CanceledSystemJobPersistenceInDays);
-        settings.FailedSystemJobPersistenceInDays = settings.ClampFailed(settings.FailedSystemJobPersistenceInDays);
-        return settings;
+        feature.SucceededSystemJobPersistenceInDays = feature.ClampSucceeded(feature.SucceededSystemJobPersistenceInDays);
+        feature.CanceledSystemJobPersistenceInDays = feature.ClampCanceled(feature.CanceledSystemJobPersistenceInDays);
+        feature.FailedSystemJobPersistenceInDays = feature.ClampFailed(feature.FailedSystemJobPersistenceInDays);
+
+        feature.MarkLoaded();
+
+        return feature;
     }
 
     /// <summary>
