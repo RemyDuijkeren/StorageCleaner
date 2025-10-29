@@ -1,87 +1,84 @@
+using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
 using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Interfaces;
 
 namespace StorageCleaner;
 
-/// <summary>
-/// Lightweight base class for all in-plugin user controls. Keeps XrmToolBox context without
-/// requiring the view to inherit from PluginControlBase (only the main control should).
-/// Provides optional delegation to the host PluginControlBase so subviews can still
-/// use WorkAsync, ExecuteMethod and logging without tight inheritance.
-/// </summary>
+// Here’s a concise checklist of lifecycle events you can subscribe to on a WinForms control, grouped roughly by when they occur:
+//
+// Construction/parenting/handle lifecycle
+// - ParentChanged: when Parent is set/changed/cleared.
+// - CreateControl/OnCreateControl: when the control is created and its handle is created.
+// - HandleCreated / HandleDestroyed: when the native handle is created/destroyed.
+// - ControlAdded / ControlRemoved: when child controls are added/removed (on containers).
+// - VisibleChanged: visibility toggled (can happen before/after handle exists).
+// - EnabledChanged: enabled state changed.
+//
+// Layout/size/position
+// - DockChanged / AnchorChanged
+// - LocationChanged / SizeChanged / ClientSizeChanged
+// - Layout: when layout occurs (e.g., after Add/Remove/Resize).
+// - Resize: when the control is resized.
+//
+// Display/paint
+// - Paint: when the control needs repainting.
+// - BackColorChanged / ForeColorChanged / FontChanged
+//
+// Focus/interaction
+// - Enter / Leave
+// - GotFocus / LostFocus
+// - Click / DoubleClick / MouseEnter / MouseLeave / MouseMove / MouseDown / MouseUp
+// - KeyDown / KeyPress / KeyUp
+//
+// Data/context-related (common patterns)
+// - Load: typically for forms and user controls when they are loaded for the first time.
+// - Disposed / Disposing: when being disposed.
+// - BindingContextChanged: when binding context changes.
+//
+// Advice: retrieving the MainControl (the PluginControlBase host)
+// - Best event to resolve the host: OnParentChanged plus OnCreateControl.
+//   - OnParentChanged fires as soon as the control is added to a container and any time it’s reparented.
+//   - OnCreateControl ensures the handle exists and often occurs soon after parenting.
+// - Strategy:
+//   - In OnParentChanged: walk up Parent chain to find the PluginControlBase host. If not found yet (e.g., still being composed), keep a lightweight watcher on the current root and retry on its ParentChanged.
+//   - Also call the same resolving method from OnCreateControl to cover cases where handle creation happens after parenting.
+// - Avoid relying solely on Load: Load may be too late in some container scenarios, and it won’t fire if the control is never shown. ParentChanged + CreateControl gives earlier and more reliable resolution.
+// - Do not resolve in the constructor: the control isn’t parented yet, so the host won’t be discoverable.
+
+/// <summary>Lightweight base class for all in-plugin user controls.</summary>
+/// <remarks>
+/// Keeps XrmToolBox context without requiring the view to inherit from PluginControlBase (only the main control should).
+/// </remarks>
 public class PluginUserControl : UserControl, IWorkerHost
 {
     readonly Worker _worker = new();
-    protected PluginControlBase PluginContext { get; private set; } = null!;
-    protected IOrganizationService? Service => PluginContext?.Service;
-
-    // Track only the current top-most ancestor so we can retry resolution when the root is reparented
-    Control? _watchedRoot;
+    readonly Lazy<PluginControlBase> _pluginContext;
+    protected PluginControlBase PluginContext => _pluginContext.Value;
+    protected IOrganizationService? Service => PluginContext.Service;
 
     public static bool IsDesignMode() => LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
-    protected override void OnCreateControl()
+    public PluginUserControl()
     {
-        base.OnCreateControl();
-        TryResolveContext();
+        _pluginContext = new Lazy<PluginControlBase>(ResolvePluginContext);
     }
 
-    protected override void OnParentChanged(EventArgs e)
+    PluginControlBase ResolvePluginContext()
     {
-        base.OnParentChanged(e);
-        TryResolveContext();
-    }
+        if (IsDesignMode())
+            throw new InvalidOperationException("Plugin host context not available in design mode");
 
-    void TryResolveContext()
-    {
-        if (PluginContext != null || IsDesignMode()) return;
-
-        // 1) Fast path: walk the current parent chain
         for (Control? c = this; c != null; c = c.Parent)
         {
             if (c is PluginControlBase pcb)
-            {
-                PluginContext = pcb;
-                DetachRootWatcher();
-                return;
-            }
+                return pcb;
         }
 
-        // 2) Not found yet: the ancestors might not be fully parented (e.g., TabControl without a parent yet).
-        //    Watch only the current top-most ancestor (root) and retry when it gets attached higher up.
-        var root = GetTopMostAncestor();
-        if (root != null)
-            AttachRootWatcher(root);
+        throw new NullReferenceException("Plugin host context not yet available. Ensure this control is parented under a PluginControlBase before accessing PluginContext.");
     }
-
-    Control? GetTopMostAncestor()
-    {
-        Control? root = this;
-        while (root?.Parent != null)
-            root = root.Parent;
-        return root;
-    }
-
-    void AttachRootWatcher(Control root)
-    {
-        if (ReferenceEquals(_watchedRoot, root)) return;
-        DetachRootWatcher();
-        _watchedRoot = root;
-        _watchedRoot.ParentChanged += Root_ParentChanged;
-    }
-
-    void DetachRootWatcher()
-    {
-        if (_watchedRoot != null)
-        {
-            _watchedRoot.ParentChanged -= Root_ParentChanged;
-            _watchedRoot = null;
-        }
-    }
-
-    void Root_ParentChanged(object? sender, EventArgs e) => TryResolveContext();
 
     public void SetWorkingMessage(string message, int width = 340, int height = 100) =>
         _worker.SetWorkingMessage(this, message, width, height);
@@ -96,47 +93,5 @@ public class PluginUserControl : UserControl, IWorkerHost
 
     /// <summary>Checks to make sure that the Plugin has an IOrganizationService Connection before calling the action.</summary>
     /// <param name="action"></param>
-    protected void ExecuteMethod(Action action)
-    {
-        if (PluginContext == null) throw new NullReferenceException("Plugin host context not yet available (ensure the control is parented before calling ExecuteMethod)");
-
-        PluginContext.ExecuteMethod(null, new ExternalMethodCallerInfo(action));
-    }
-
-    protected void EnsureConnectedThen(Action<IOrganizationService> work)
-    {
-        if (IsDesignMode()) return;
-        if (PluginContext == null) throw new InvalidOperationException("Plugin host context not yet available");
-
-        // Use ExecuteMethod to auto-connect if needed
-        PluginContext.ExecuteMethod(null, new ExternalMethodCallerInfo(() =>
-        {
-            var svc = PluginContext.Service;
-            if (svc == null) throw new InvalidOperationException("Service unavailable after connect attempt");
-            work(svc);
-        }));
-    }
-
-    protected void EnsureConnectedThenAsync(Func<IOrganizationService, Task> work)
-    {
-        if (IsDesignMode()) return;
-        if (PluginContext == null) throw new InvalidOperationException("Plugin host context not yet available");
-
-        WorkAsync(new WorkAsyncInfo
-        {
-            Message = "Connecting...",
-            Work = (bw, e) =>
-            {
-                PluginContext.ExecuteMethod(null, new ExternalMethodCallerInfo(() =>
-                {
-                    e.Result = PluginContext.Service ?? throw new InvalidOperationException("Service unavailable after connect attempt");
-                }));
-            },
-            PostWorkCallBack = e =>
-            {
-                var svc = (IOrganizationService)e.Result!;
-                _ = work(svc); // you can await with async void wrapper if needed
-            }
-        });
-    }
+    protected void ExecuteMethod(Action action) => PluginContext.ExecuteMethod(null, new ExternalMethodCallerInfo(action));
 }

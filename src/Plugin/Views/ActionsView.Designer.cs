@@ -16,6 +16,10 @@ namespace StorageCleaner.Views
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
         private void InitializeComponent()
         {
             this.splitContainer = new System.Windows.Forms.SplitContainer();
@@ -40,24 +44,28 @@ namespace StorageCleaner.Views
             // splitContainer.Panel2
             //
             this.splitContainer.Panel2.Controls.Add(this.pnlHost);
-            this.splitContainer.Size = new System.Drawing.Size(632, 344);
-            this.splitContainer.SplitterDistance = 200;
+            this.splitContainer.Size = new System.Drawing.Size(632, 392);
+            this.splitContainer.SplitterDistance = 150;
             this.splitContainer.TabIndex = 0;
             //
             // lstActions
             //
+            this.lstActions.DisplayMember = "DisplayName";
             this.lstActions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstActions.FormattingEnabled = true;
             this.lstActions.IntegralHeight = false;
+            this.lstActions.Location = new System.Drawing.Point(0, 0);
             this.lstActions.Name = "lstActions";
+            this.lstActions.Size = new System.Drawing.Size(150, 392);
             this.lstActions.TabIndex = 0;
-            this.lstActions.DisplayMember = "DisplayName";
             this.lstActions.SelectedIndexChanged += new System.EventHandler(this.lstActions_SelectedIndexChanged);
             //
             // pnlHost
             //
             this.pnlHost.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlHost.Location = new System.Drawing.Point(0, 0);
             this.pnlHost.Name = "pnlHost";
+            this.pnlHost.Size = new System.Drawing.Size(428, 392);
             this.pnlHost.TabIndex = 0;
             //
             // ActionsView
@@ -72,7 +80,6 @@ namespace StorageCleaner.Views
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
     }
 }

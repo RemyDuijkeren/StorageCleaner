@@ -12,6 +12,15 @@ public partial class SystemJobCleanupActionControl : ActionControl
     {
         InitializeComponent();
 
+
+        // Provide contextual help for this action (shown in the base ActionControl help section)
+        HelpVisible = true;
+        HelpText = "Configure automatic cleanup of System Jobs (asyncoperation).\n\n" +
+                   "Use 'Analyze' to fetch current settings from the connected environment and view related orgdborgsettings.\n" +
+                   "Use 'Clean' to validate and save your preferences.\n\n" +
+                   "Tips:\n- Keep succeeded jobs short-lived to reduce storage.\n- Canceled/Failed jobs can be retained a bit longer for troubleshooting.\n\n" +
+                   "Docs:\n- Microsoft: Manage system jobs (async operations): https://learn.microsoft.com/dynamics365/customerengagement/on-premises/developer/manage-async-jobs\n- Organization (orgdborg) Settings: https://learn.microsoft.com/power-platform/admin/organization-settings";
+
         // Initialize UI with default property values
         chkEnableSystemJobCleanup.Checked = _feature.EnableSystemJobCleanup;
 
@@ -107,7 +116,7 @@ public partial class SystemJobCleanupActionControl : ActionControl
                 MessageBox.Show(error ?? "Unknown validation error", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            MessageBox.Show("Settings saved.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Settings applied.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             // Reload to reflect latest persisted values in grid
             AnalyzeClick(this, EventArgs.Empty);

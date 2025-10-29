@@ -7,7 +7,7 @@ public partial class ActionsView : PluginUserControl
 {
     record ActionItem(Type Type, string Id, string DisplayName, string Description)
     {
-        public override string ToString() => DisplayName;
+        public override string ToString() => $"{DisplayName}{Environment.NewLine} - {Description}";
     }
 
     readonly List<ActionItem> _items = new();
@@ -18,46 +18,21 @@ public partial class ActionsView : PluginUserControl
     {
         InitializeComponent();
         // Defer loading actions until control is loaded to ensure Handle created
-        //this.Load += ActionsView_Load;
-        SafeLoadActions();
+        //this.Load += ActionView_Load;
+        LoadActions();
     }
 
 
-    void ActionsView_Load(object? sender, EventArgs e)
-    {
-        if (PluginContext == null)
-            return;
-        SafeLoadActions();
-
-        // // If the control is already created and visible, load now; otherwise Load event will handle it
-        // if (IsHandleCreated)
-        // {
-        //     SafeLoadActions();
-        // }
-    }
-
-    void SafeLoadActions()
-    {
-        if (_actionsLoaded)
-            return;
-        try
-        {
-            LoadActions();
-        }
-        catch (Exception ex)
-        {
-            if (PluginContext != null)
-                PluginContext.ShowErrorDialog(ex, "Failed to load actions");
-            else
-                MessageBox.Show($"Failed to load actions: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-    }
+    void ActionView_Load(object? sender, EventArgs e) => LoadActions();
 
     void LoadActions()
     {
+        if (_actionsLoaded) return;
+
         _items.Clear();
 
-        foreach ((Type type, ActionAttribute attribute) in FindActions(Assembly.GetExecutingAssembly()))
+        var actions = FindActions(Assembly.GetExecutingAssembly());
+        foreach ((Type type, ActionAttribute attribute) in actions)
         {
             _items.Add(new ActionItem(type, attribute.Id, attribute.DisplayName, attribute.Description));
         }
@@ -65,35 +40,31 @@ public partial class ActionsView : PluginUserControl
         // Temporarily detach to avoid duplicate reloads during rebinding
         lstActions.SelectedIndexChanged -= lstActions_SelectedIndexChanged;
 
-        lstActions.DataSource = null;
-        lstActions.DisplayMember = nameof(ActionItem.DisplayName);
+        lstActions.DisplayMember = nameof(ActionItem.ToString);
         lstActions.ValueMember = nameof(ActionItem.Id);
         lstActions.DataSource = _items;
 
         if (_items.Count > 0)
         {
             lstActions.SelectedIndex = 0;
-            // Ensure first item loads even if SelectedIndexChanged isn't raised by data binding
+            // Ensure the first item loads even if data binding doesn't raise SelectedIndexChanged
             ShowSelectedAction();
         }
 
-        // Reattach event after initial load
+        // Reattach event after an initial load
         lstActions.SelectedIndexChanged += lstActions_SelectedIndexChanged;
 
         _actionsLoaded = true;
     }
 
-    void lstActions_SelectedIndexChanged(object? sender, EventArgs e)
-    {
-        ShowSelectedAction();
-    }
+    void lstActions_SelectedIndexChanged(object? sender, EventArgs e) => ShowSelectedAction();
 
     void ShowSelectedAction()
     {
         if (lstActions.SelectedItem is not ActionItem item)
             return;
 
-        // If the currently displayed control is already the same type, do nothing to preserve state
+        // If the currently displayed control is already the same type, do nothing to preserve the state
         if (_current != null && _current.GetType() == item.Type)
             return;
 
@@ -118,21 +89,17 @@ public partial class ActionsView : PluginUserControl
     }
 
     /// <summary>
-    /// Finds and returns all types within the specified assembly that are concrete, derive from
-    /// <see cref="ActionControl"/>, have a public default constructor, and are decorated with
-    /// the <see cref="ActionAttribute"/>. The results are ordered by the <c>DisplayName</c> property
-    /// of the <see cref="ActionAttribute"/>.
+    /// Finds and returns all types within the specified assembly that are concrete and have a public default constructor,
+    /// and are decorated with the <see cref="ActionAttribute"/>.
     /// </summary>
     /// <param name="assembly">The assembly to search for types that meet the specified criteria.</param>
     /// <returns>
     /// A collection of tuples where each tuple contains the following:
-    /// - <c>Type</c>: The type of the class derived from <see cref="ActionControl"/>.
     /// - <c>Action</c>: The associated <see cref="ActionAttribute"/> metadata of the class.
     /// </returns>
     static IEnumerable<(Type Type, ActionAttribute Action)> FindActions(Assembly assembly) =>
         assembly.GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract)
-                .Where(t => typeof(ActionControl).IsAssignableFrom(t))
                 .Where(t => t.GetConstructor(Type.EmptyTypes) != null)
                 .Select(t => new
                 {
