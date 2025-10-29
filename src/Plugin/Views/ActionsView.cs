@@ -17,13 +17,8 @@ public partial class ActionsView : PluginUserControl
     public ActionsView()
     {
         InitializeComponent();
-        // Defer loading actions until control is loaded to ensure Handle created
-        //this.Load += ActionView_Load;
         LoadActions();
     }
-
-
-    void ActionView_Load(object? sender, EventArgs e) => LoadActions();
 
     void LoadActions()
     {

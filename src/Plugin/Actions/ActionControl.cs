@@ -16,32 +16,24 @@ public partial class ActionControl : PluginUserControl
     public ActionControl()
     {
         InitializeComponent();
-        // Defaults for help section
-        HelpVisible = false;
         HelpText = string.Empty;
     }
 
-    /// <summary>
-    /// Panel that hosts the derived control's custom UI.
-    /// </summary>
+    /// <summary>Panel that hosts the derived control's custom UI.</summary>
     protected Panel ContentPanel => pnlContent;
 
-    /// <summary>
-    /// Gets or sets the help text. Supports URLs (clickable).
-    /// </summary>
+    /// <summary>Gets or sets the help text. Supports URLs (clickable).</summary>
     public string HelpText
     {
         get => rtbHelp.Text;
         set => rtbHelp.Text = value ?? string.Empty;
     }
 
-    /// <summary>
-    /// Gets or sets whether the help section is visible.
-    /// </summary>
-    public bool HelpVisible
+    /// <summary>Gets or sets the text for the Clean button.</summary>
+    public string CleanButtonText
     {
-        get => grpHelp.Visible;
-        set => grpHelp.Visible = value;
+        get => btnClean.Text;
+        set => btnClean.Text = value ?? "Clean";
     }
 
     protected override void OnCreateControl()
@@ -53,10 +45,10 @@ public partial class ActionControl : PluginUserControl
             layoutRoot.Visible = false;
             return;
         }
-        AdoptExistingChildrenIntoContentPanel();
+        ReparentChildControlsIntoContentPanel();
     }
 
-    void AdoptExistingChildrenIntoContentPanel()
+    void ReparentChildControlsIntoContentPanel()
     {
         if (_adopted) return;
         _adopted = true;
@@ -88,8 +80,7 @@ public partial class ActionControl : PluginUserControl
     void btnAnalyze_Click(object? sender, EventArgs e) => AnalyzeClick(sender!, e);
     void btnClean_Click(object? sender, EventArgs e) => CleanClick(sender!, e);
 
-    /// <summary>Optional hook so ActionsView can ask the control to load or analyze the current situation.
-    /// </summary>
+    /// <summary>Optional hook so ActionsView can ask the control to load or analyze the current situation.</summary>
     public virtual void AnalyzeClick(object sender, EventArgs e)
     {
         // Default no-op

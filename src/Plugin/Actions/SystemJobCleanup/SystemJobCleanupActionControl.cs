@@ -12,9 +12,9 @@ public partial class SystemJobCleanupActionControl : ActionControl
     {
         InitializeComponent();
 
+        CleanButtonText = "Apply";
 
         // Provide contextual help for this action (shown in the base ActionControl help section)
-        HelpVisible = true;
         HelpText = "Configure automatic cleanup of System Jobs (asyncoperation).\n\n" +
                    "Use 'Analyze' to fetch current settings from the connected environment and view related orgdborgsettings.\n" +
                    "Use 'Clean' to validate and save your preferences.\n\n" +
